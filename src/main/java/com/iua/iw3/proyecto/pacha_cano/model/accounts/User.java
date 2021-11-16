@@ -1,5 +1,6 @@
 package com.iua.iw3.proyecto.pacha_cano.model.accounts;
 
+import com.iua.iw3.proyecto.pacha_cano.model.accounts.Rol;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
