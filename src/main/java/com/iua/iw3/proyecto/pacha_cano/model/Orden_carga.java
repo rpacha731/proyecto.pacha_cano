@@ -65,6 +65,12 @@ public class Orden_carga {
     @Column(nullable = false)
     private Date fecha_peso_inicial; //recepción dle peso inicial
 
+     @Column(nullable = false)
+     private Date fecha_turno;
+
+     @Column(nullable = false)
+     private long preset;
+
     @Column(nullable = false)
     private Date fecha_inicio_carga;
 
