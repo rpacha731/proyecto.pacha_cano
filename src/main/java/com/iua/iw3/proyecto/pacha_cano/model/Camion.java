@@ -19,7 +19,7 @@ public class Camion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String patente;
@@ -28,6 +28,6 @@ public class Camion {
     private String descripcion;
 
     @Column (nullable = false)
-    private long cisternado;
+    private Long cisternado;
 
 }

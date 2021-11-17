@@ -19,15 +19,15 @@ public class Chofer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private String nombre;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private String apellido;
 
-    @Column (unique = true)
-    private long dni;
+    @Column(unique = true)
+    private Long dni;
 
 }

@@ -19,12 +19,12 @@ public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private String nombre;
 
-    @Column (length = 100)
+    @Column(length = 100)
     private String descripcion;
 
 }

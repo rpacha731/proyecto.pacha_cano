@@ -5,15 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.io.Serializable;
 
 @Data
 @Entity
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@Table(name="clientes")
-public class Cliente {
+public class DatosCarga implements Serializable {
 
     private static final long serialVersionUID = -4871142170558316526L;
 
@@ -21,9 +24,11 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true) //No sé si la razón social tiene que ser unique
-    private String razonSocial;
+    private Double masaAcumulada;
 
-    private String contacto;
+    private Double temperatura;
 
+    private Double densidad;
+
+    private Double caudal;
 }
