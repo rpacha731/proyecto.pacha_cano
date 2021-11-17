@@ -31,7 +31,7 @@ public class AuthToken implements Serializable {
     private String token;
 
     @Column(columnDefinition = "DATETIME DEFAULT NULL")
-    private Date to;
+    private Date toDate;
 
     @Column(columnDefinition = "DATETIME DEFAULT NULL")
     private Date lastUsed;
@@ -51,7 +51,7 @@ public class AuthToken implements Serializable {
 
     public AuthToken (User user, Date toDate) {
         setUser(user);
-        setTo(toDate);
+        setToDate(toDate);
         setLastUsed(new Date());
         setSeries(generateSeriesData());
         setToken(generateTokenData());
@@ -99,7 +99,7 @@ public class AuthToken implements Serializable {
     }
 
     public boolean valid() {
-        return System.currentTimeMillis() <= getTo().getTime();
+        return System.currentTimeMillis() <= getToDate().getTime();
     }
 
     private static final String DELIMITER = ":";

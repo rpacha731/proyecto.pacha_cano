@@ -55,14 +55,14 @@ public class AuthTokenBusiness implements IAuthTokenBusiness {
 
     @Override
     public void extendDateToken(AuthToken token) {
-        token.setTo(this.fechaExpiracion());
+        token.setToDate(this.fechaExpiracion());
         this.authTokenRepository.save(token);
     }
 
     @Override
     public void extendDateToken(String tokenEncript) {
         AuthToken aux = this.authTokenRepository.findById(AuthToken.decode(tokenEncript)[0]).get();
-        aux.setTo(this.fechaExpiracion());
+        aux.setToDate(this.fechaExpiracion());
         this.authTokenRepository.save(aux);
     }
 
