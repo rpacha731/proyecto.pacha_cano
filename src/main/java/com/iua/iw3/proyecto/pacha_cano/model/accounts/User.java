@@ -44,8 +44,8 @@ public class User implements UserDetails, Serializable {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
-            joinColumns = {@JoinColumn(name="id_user", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name="id_rol", referencedColumnName = "id")}
+            joinColumns = {@JoinColumn(name="user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name="rol_id", referencedColumnName = "id")}
     )
     private Set<Rol> roles;
 

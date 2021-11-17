@@ -36,7 +36,8 @@ public class AuthToken implements Serializable {
     @Column(columnDefinition = "DATETIME DEFAULT NULL")
     private Date lastUsed;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
     private User user;
 
     private Long requestCount;
