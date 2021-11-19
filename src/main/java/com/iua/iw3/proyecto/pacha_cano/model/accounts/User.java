@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -53,6 +54,12 @@ public class User implements UserDetails, Serializable {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles().stream().map(r -> new SimpleGrantedAuthority(r.getNombre()))
                 .collect(Collectors.toList());
+    }
+
+    public String checkAccount(PasswordEncoder passwordEncoder, String password) {
+        if (!isEnabled()) return "ACCOUNT_NOT_ENABLED";
+        if (!passwordEncoder.matches(password, getPassword())) return "BAD_PASSWORD";
+        return null;
     }
 
     @Override

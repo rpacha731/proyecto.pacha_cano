@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @Table(name="ordenes")
-public class OrdenCarga {
+public class OrdenCarga implements Serializable {
 
     private static final long serialVersionUID = -4871142170558316526L;
 
@@ -24,7 +25,7 @@ public class OrdenCarga {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private Long numero_orden;
+    private Long numeroOrden;
 
     @OneToOne(cascade =  CascadeType.ALL)
     @JoinColumn(name = "id_camion")
@@ -80,11 +81,16 @@ public class OrdenCarga {
     @Column(nullable = false, columnDefinition = "DATETIME")
     private Date fechaHoraPesoFinal; //recepción del peso final
 
-    @OneToOne(fetch = FetchType.EAGER, cascade =  CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "datos_carga_prom")
-    private DatosCarga datosCargaProm;
+    private DatosCargaProm datosCargaProm;
 
-    @OneToMany(targetEntity = DatosCarga.class, mappedBy = "orden", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "orden")
     private List<DatosCarga> datosCargaHistorico;
+
+    public static Integer generateRandomPassword () {
+        Double aux = 10000 + Math.random() * 90000;
+        return aux.intValue();
+    }
 
 }

@@ -29,7 +29,7 @@ public class DatosCarga implements Serializable {
 
     private Double caudal;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "orden_id")
     private OrdenCarga orden;
 }

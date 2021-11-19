@@ -13,8 +13,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@Table(name="choferes")
-public class Chofer implements Serializable {
+public class DatosCargaProm implements Serializable {
 
     private static final long serialVersionUID = -4871142170558316526L;
 
@@ -22,13 +21,11 @@ public class Chofer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String nombre;
+    private Double masaAcumulada;
 
-    @Column(nullable = false)
-    private String apellido;
+    private Double temperatura;
 
-    @Column(unique = true)
-    private Long dni;
+    private Double densidad;
 
+    private Double caudal;
 }

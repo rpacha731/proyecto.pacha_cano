@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Data
 @Entity
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @Builder
 @AllArgsConstructor
 @Table(name="productos")
-public class Producto {
+public class Producto implements Serializable {
 
     private static final long serialVersionUID = -4871142170558316526L;
 
