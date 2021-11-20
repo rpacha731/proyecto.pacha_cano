@@ -13,7 +13,7 @@ public interface AuthTokenRepository extends JpaRepository<AuthToken, String> {
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM auth_token WHERE to < ?", nativeQuery = true)
-    void purgeToDate(Date hasta);
+    @Query(value = "DELETE FROM auth_token WHERE to_date < ?", nativeQuery = true)
+    void purgeToDate(Date toDate);
 
 }

@@ -3,6 +3,7 @@ package com.iua.iw3.proyecto.pacha_cano.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.iua.iw3.proyecto.pacha_cano.bussiness.IOrdenCargaBusiness;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.BusinessException;
+import com.iua.iw3.proyecto.pacha_cano.exceptions.DuplicateException;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.FoundException;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.NotFoundException;
 import com.iua.iw3.proyecto.pacha_cano.model.OrdenCarga;
@@ -39,18 +40,16 @@ public class OrdenCargaRestController {
 
     @PostMapping(value = "ordenes-carga", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> crearOrdenCarga (@RequestBody OrdenCarga ordenCarga) {
-        OrdenCarga nuevaOrden;
         try {
-            nuevaOrden = ordenCargaBusiness.create(ordenCarga);
+            OrdenCarga nuevaOrden = ordenCargaBusiness.create(ordenCarga);
             String orden = JsonUtils
                     .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
                             .writeValueAsString(nuevaOrden);
-
-            if (nuevaOrden == null)
-                return new ResponseEntity<>(orden, HttpStatus.OK);
-            return new ResponseEntity<>(orden, HttpStatus.OK);
-        } catch (BusinessException | FoundException | JsonProcessingException e) {
+            return new ResponseEntity<>(orden, HttpStatus.CREATED);
+        } catch (BusinessException | JsonProcessingException e) {
             return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (DuplicateException e) {
+            return new ResponseEntity<>(new MsgResponse(409, e.getMessage()).toString(), HttpStatus.CONFLICT);
         }
     }
 }

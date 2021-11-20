@@ -107,6 +107,7 @@ public class DataLoader implements CommandLineRunner {
 
             List<DatosCarga> listAux = new ArrayList<>();
             listAux.add(datosCarga);
+            listAux.add(datosCarga);
 
             OrdenCarga ordenCarga = OrdenCarga.builder()
                     .numeroOrden(1L)

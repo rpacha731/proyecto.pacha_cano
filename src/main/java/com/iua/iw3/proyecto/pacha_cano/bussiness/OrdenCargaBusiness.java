@@ -1,11 +1,11 @@
 package com.iua.iw3.proyecto.pacha_cano.bussiness;
 
 import com.iua.iw3.proyecto.pacha_cano.exceptions.BusinessException;
+import com.iua.iw3.proyecto.pacha_cano.exceptions.DuplicateException;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.FoundException;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.NotFoundException;
-import com.iua.iw3.proyecto.pacha_cano.model.Estados;
-import com.iua.iw3.proyecto.pacha_cano.model.OrdenCarga;
-import com.iua.iw3.proyecto.pacha_cano.persistence.OrdenCargaRepository;
+import com.iua.iw3.proyecto.pacha_cano.model.*;
+import com.iua.iw3.proyecto.pacha_cano.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,10 @@ import java.util.Optional;
 public class OrdenCargaBusiness implements IOrdenCargaBusiness {
 
     private OrdenCargaRepository ordenCargaRepository;
-
+    private CamionRepository camionRepository;
+    private ClienteRepository clienteRepository;
+    private ChoferRepository choferRepository;
+    private ProductoRepository productoRepository;
 
     @Override
     public List<OrdenCarga> listAll() throws BusinessException {
@@ -33,58 +36,71 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
     }
 
     @Override
-    public OrdenCarga load(Long aLong) throws BusinessException, NotFoundException {
+    public OrdenCarga load(Long idOrdenCarga) throws BusinessException, NotFoundException {
         Optional<OrdenCarga> o;
         try {
-            o = ordenCargaRepository.findByNumeroOrden(aLong);
+            o = ordenCargaRepository.findByNumeroOrden(idOrdenCarga);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
         if (o.isEmpty())
-            return null;// throw new NotFoundException("No se encuentra la orden de carga con numero de orden = " + aLong);
+            throw new NotFoundException("No se encuentra la orden de carga con id = " + idOrdenCarga);
         return o.get();
     }
 
     @Override
-    public OrdenCarga create(OrdenCarga object) throws BusinessException, FoundException {
+    public OrdenCarga loadByNumeroOrden(Long numOrden) throws BusinessException, DuplicateException {
+        Optional<OrdenCarga> o;
         try {
-            OrdenCarga o = load(object.getNumeroOrden());
-            if (o != null) {
-                throw new FoundException("Ya existe una orden de carga con numero de orden = " + object.getNumeroOrden());
-            }
-
-        } catch (NotFoundException e) {
-            log.error("****************************************************");
-            try {
-                OrdenCarga ordenCarga = OrdenCarga.builder()
-                        .numeroOrden(object.getNumeroOrden())
-                        .camion(object.getCamion())
-                        .chofer(object.getChofer())
-                        .cliente(object.getCliente())
-                        .producto(object.getProducto())
-                        .fechaHoraRecepcion(new Date())
-                        .fechaHoraTurno(object.getFechaHoraTurno())
-                        .preset(object.getPreset())
-                        .estado(Estados.E1)
-                        .frecuencia(1)
-                        .build();
-                return ordenCargaRepository.save(ordenCarga);
-            } catch (Exception f) {
-                log.error(f.getMessage(), f);
-                throw new BusinessException(f);
-            }
+            o = ordenCargaRepository.findByNumeroOrden(numOrden);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new BusinessException(e);
         }
+        if (o.isPresent()) throw new DuplicateException("Ya existe una orden de carga con el numero de orden = " + numOrden);
         return null;
-        //return ordenCargaRepository.save(ordenCarga);
+    }
+
+    @Override
+    public OrdenCarga create(OrdenCarga ordenCarga) throws BusinessException, DuplicateException {
+        try {
+            OrdenCarga o = loadByNumeroOrden(ordenCarga.getNumeroOrden());
+        } catch (DuplicateException e) {
+            throw new DuplicateException(e);
+        }
+        try {
+            Optional<Camion> camionAux = camionRepository.findByPatente(ordenCarga.getCamion().getPatente());
+            Optional<Chofer> choferAux = choferRepository.findByDni(ordenCarga.getChofer().getDni());
+            Optional<Cliente> clienteAux = clienteRepository.findByRazonSocial(ordenCarga.getCliente().getRazonSocial());
+            Optional<Producto> productoAux = productoRepository.findByNombre(ordenCarga.getProducto().getNombre());
+
+            OrdenCarga orden = OrdenCarga.builder()
+                    .numeroOrden(ordenCarga.getNumeroOrden())
+                    .camion(camionAux.isEmpty() ? ordenCarga.getCamion() : camionAux.get())
+                    .chofer(choferAux.isEmpty() ? ordenCarga.getChofer() : choferAux.get())
+                    .cliente(clienteAux.isEmpty() ? ordenCarga.getCliente() : clienteAux.get())
+                    .producto(productoAux.isEmpty() ? ordenCarga.getProducto() : productoAux.get())
+                    .fechaHoraRecepcion(new Date())
+                    .fechaHoraTurno(ordenCarga.getFechaHoraTurno())
+                    .preset(ordenCarga.getPreset())
+                    .estado(Estados.E1)
+                    .frecuencia(1)
+                    .build();
+            return ordenCargaRepository.save(orden);
+
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new BusinessException(e);
+        }
     }
 
 
     @Override
-    public OrdenCarga modify(OrdenCarga object) throws BusinessException, NotFoundException {
-        OrdenCarga old = load(object.getId());
+    public OrdenCarga modify(OrdenCarga ordenCarga) throws BusinessException, NotFoundException {
+        OrdenCarga old = load(ordenCarga.getId());
         try {
-            return ordenCargaRepository.save(object);
+            return ordenCargaRepository.save(ordenCarga);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException(e);
@@ -92,13 +108,15 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
     }
 
     @Override
-    public void deleteById(Long aLong) throws BusinessException, NotFoundException {
-        load(aLong);
+    public void deleteById(Long idOrdenCarga) throws BusinessException, NotFoundException {
+        load(idOrdenCarga);
         try {
-            ordenCargaRepository.deleteById(aLong);
+            ordenCargaRepository.deleteById(idOrdenCarga);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
     }
+
+
 }

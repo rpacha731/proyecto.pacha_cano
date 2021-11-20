@@ -21,6 +21,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Data
 @Builder
+@Table(name = "auth_token")
 public class AuthToken implements Serializable {
 
     private static final long serialVersionUID = -2431961978969608445L;
