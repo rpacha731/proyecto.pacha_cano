@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -17,6 +18,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class UtilsRest {
 
+    @Autowired
     private IAuthTokenBusiness authTokenBusiness;
 
     public UtilsRest () { super(); }

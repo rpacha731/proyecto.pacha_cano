@@ -29,20 +29,9 @@ public class DataLoader implements CommandLineRunner {
     private RolRepository rolRepository;
 
     private OrdenCargaRepository ordenCargaRepository;
-    private CamionRepository camionRepository;
-    private ClienteRepository clienteRepository;
-    private ChoferRepository choferRepository;
-    private ProductoRepository productoRepository;
-    private DatosCargaRepository datosCargaRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        ordenCargaRepository.deleteAll();
-        camionRepository.deleteAll();
-        clienteRepository.deleteAll();
-        choferRepository.deleteAll();
-        productoRepository.deleteAll();
-        datosCargaRepository.deleteAll();
 
         if (rolRepository.findByNombre("ROLE_ADMIM").isEmpty()) {
             Rol admin = Rol.builder()
@@ -85,83 +74,68 @@ public class DataLoader implements CommandLineRunner {
             }
         }
 
-        Camion camion = Camion.builder()
-                .patente("ABC123")
-                .descripcion("Alto camion papaaaaa")
-                .cisternado(250000L)
-                .build();
+        if (ordenCargaRepository.findAll().isEmpty()) {
+            Camion camion = Camion.builder()
+                    .patente("ABC123")
+                    .descripcion("Alto camion papaaaaa")
+                    .cisternado(250000L)
+                    .build();
 
-        Cliente cliente = Cliente.builder()
-                .razonSocial("Cliente 1")
-                .contacto("152568484561")
-                .build();
+            Cliente cliente = Cliente.builder()
+                    .razonSocial("Cliente 1")
+                    .contacto("152568484561")
+                    .build();
 
-        Chofer chofer = Chofer.builder()
-                .nombre("Nicolas")
-                .apellido("Gómez")
-                .dni(4894891531L)
-                .build();
+            Chofer chofer = Chofer.builder()
+                    .nombre("Nicolas")
+                    .apellido("Gómez")
+                    .dni(4894891531L)
+                    .build();
 
-        Producto producto = Producto.builder()
-                .nombre("Gas Liquido")
-                .descripcion("Gas GNC Liquido Volátil")
-                .build();
+            Producto producto = Producto.builder()
+                    .nombre("Gas Liquido")
+                    .descripcion("Gas GNC Liquido Volátil")
+                    .build();
 
-        DatosCarga datosCarga = DatosCarga.builder()
-                .masaAcumulada(25000.65)
-                .temperatura(32.21)
-                .densidad(0.98)
-                .caudal(1.256)
-                .build();
+            DatosCarga datosCarga = DatosCarga.builder()
+                    .masaAcumulada(25000.65)
+                    .temperatura(32.21)
+                    .densidad(0.98)
+                    .caudal(1.256)
+                    .build();
 
-//        try {
-//            camionRepository.save(camion);
-//            clienteRepository.save(cliente);
-//            choferRepository.save(chofer);
-//            productoRepository.save(producto);
-//            datosCargaRepository.save(datosCarga);
-//            datosCargaPromRepository.save(datosCargaProm);
-//        } catch (DataIntegrityViolationException e) {
-//            log.error(e.getMessage());
-//        }
 
-        List<DatosCarga> listAux = new ArrayList<>();
-        listAux.add(datosCarga);
+            List<DatosCarga> listAux = new ArrayList<>();
+            listAux.add(datosCarga);
 
-//        camion = camionRepository.getById(1L);
-//        cliente = clienteRepository.getById(1L);
-//        chofer = choferRepository.getById(1L);
-//        producto = productoRepository.getById(1L);
+            OrdenCarga ordenCarga = OrdenCarga.builder()
+                    .numeroOrden(1L)
+                    .camion(camion)
+                    .cliente(cliente)
+                    .chofer(chofer)
+                    .producto(producto)
+                    .pesoInicial(0.235)
+                    .pesoFinal(255000.254)
+                    .frecuencia(10)
+                    .password(OrdenCarga.generateRandomPassword())
+                    .estado(Estados.E1)
+                    .fechaHoraRecepcion(new Date())
+                    .fechaHoraPesoInicial(new Date())
+                    .fechaHoraTurno(new Date())
+                    .preset(2550L)
+                    .fechaHoraInicioCarga(new Date())
+                    .fechaHoraFinCarga(new Date())
+                    .fechaHoraPesoFinal(new Date())
+                    .registroDatosCarga(listAux)
+                    .promedioDatosCarga(datosCarga)
+                    .build();
 
-        OrdenCarga ordenCarga = OrdenCarga.builder()
-                .numeroOrden(1L)
-                .camion(camion)
-                .cliente(cliente)
-                .chofer(chofer)
-                .producto(producto)
-                .pesoInicial(0.235)
-                .pesoFinal(255000.254)
-                .frecuencia(10)
-                .password(OrdenCarga.generateRandomPassword())
-                .estado(Estados.E1)
-                .fechaHoraRecepcion(new Date())
-                .fechaHoraPesoInicial(new Date())
-                .fechaHoraTurno(new Date())
-                .preset(2550L)
-                .fechaHoraInicioCarga(new Date())
-                .fechaHoraFinCarga(new Date())
-                .fechaHoraPesoFinal(new Date())
-                .registroDatosCarga(listAux)
-                .promedioDatosCarga(datosCarga)
-                .build();
-
-        try {
-            this.ordenCargaRepository.save(ordenCarga);
-        } catch (DataIntegrityViolationException e) {
-            log.error(e.getMessage());
+            try {
+                this.ordenCargaRepository.save(ordenCarga);
+            } catch (DataIntegrityViolationException e) {
+                log.error(e.getMessage());
+            }
         }
-
-
 
     }
 }

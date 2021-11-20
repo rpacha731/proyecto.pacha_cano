@@ -9,6 +9,7 @@ import com.iua.iw3.proyecto.pacha_cano.utils.LoginRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +25,7 @@ public class AuthRestController extends UtilsRest {
     private IUserBusiness userBusiness;
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping(value = "/login")
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> registro(@RequestBody LoginRequest loginRequest) {
         try {
             User user = userBusiness.loadByEmail(loginRequest.getUserEmail());
