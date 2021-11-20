@@ -76,7 +76,7 @@ public class DataLoader implements CommandLineRunner {
 
         if (ordenCargaRepository.findAll().isEmpty()) {
             Camion camion = Camion.builder()
-                    .patente("ABC123")
+                    .patente("ABC1234")
                     .descripcion("Alto camion papaaaaa")
                     .cisternado(250000L)
                     .build();

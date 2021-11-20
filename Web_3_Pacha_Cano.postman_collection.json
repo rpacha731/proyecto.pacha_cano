@@ -42,6 +42,38 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Crear orden carga",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "XAUTHTOKEN",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"numeroOrden\": 679787,\r\n  \"camion\": {\r\n    \"cisternado\": 2500,\r\n    \"descripcion\": \"Camioncito\",\r\n    \"patente\": \"ABC123\"\r\n  },\r\n  \"chofer\": {\r\n    \"apellido\": \"Juarez\",\r\n    \"dni\": 58967854,\r\n    \"nombre\": \"Marcos\"\r\n  },\r\n  \"cliente\": {\r\n    \"contacto\": \"Tilin\",\r\n    \"razonSocial\": \"Tilin\"\r\n  },\r\n  \"producto\": {\r\n    \"descripcion\": \"Gasoil\",\r\n    \"nombre\": \"Gasoil licuado\"\r\n  },\r\n  \"fechaHoraTurno\": \"2021-11-20T02:48:08.467Z\",\r\n  \"preset\": 2400\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/ordenes-carga",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ordenes-carga"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [

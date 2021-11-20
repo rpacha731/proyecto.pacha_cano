@@ -43,50 +43,55 @@ public class OrdenCarga implements Serializable {
     @JoinColumn(name = "id_producto")
     private Producto producto;
 
-    @Column(nullable = false)
-    private Double pesoInicial;
-
-    @Column(nullable = false)
-    private Double pesoFinal;
-
-    @Column(nullable = false)
-    private Integer frecuencia; // hacemos una lista estatica
-
-    @Column (nullable = false, length = 5)
-    private Integer password;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Estados estado;
-
-    @Column(nullable = false, columnDefinition = "DATETIME")
-    private Date fechaHoraRecepcion;
-
-    @Column(nullable = false, columnDefinition = "DATETIME")
-    private Date fechaHoraPesoInicial;
-
     @Column(nullable = false, columnDefinition = "DATETIME")
     private Date fechaHoraTurno;
 
     @Column(nullable = false)
     private Long preset;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Estados estado;
+
+    private Integer frecuencia; // hacemos una lista estatica
+
     @Column(nullable = false, columnDefinition = "DATETIME")
+    private Date fechaHoraRecepcion;
+
+    // Hasta acá sería el E1
+
+    private Double pesoInicial;
+
+    @Column (length = 5)
+    private Integer password;
+
+    @Column(columnDefinition = "DATETIME")
+    private Date fechaHoraPesoInicial;
+
+    // Hasta acá sería el E2
+
+    @Column(columnDefinition = "DATETIME")
     private Date fechaHoraInicioCarga;
 
-    @Column(nullable = false, columnDefinition = "DATETIME")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "registro_datos_carga")
+    private List<DatosCarga> registroDatosCarga;
+
+    @Column(columnDefinition = "DATETIME")
     private Date fechaHoraFinCarga;
 
-    @Column(nullable = false, columnDefinition = "DATETIME")
+    private Double pesoFinal;
+
+    @Column(columnDefinition = "DATETIME")
     private Date fechaHoraPesoFinal;
+
+    // Hasta acá sería el E3
 
     @OneToOne
     @JoinColumn(name = "promedio_datos_carga")
     private DatosCarga promedioDatosCarga;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "registro_datos_carga")
-    private List<DatosCarga> registroDatosCarga;
+    // Hasta acá sería el E4
 
     public static Integer generateRandomPassword () {
         Double aux = 10000 + Math.random() * 90000;
