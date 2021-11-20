@@ -56,7 +56,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"numeroOrden\": 679787,\r\n  \"camion\": {\r\n    \"cisternado\": 2500,\r\n    \"descripcion\": \"Camioncito\",\r\n    \"patente\": \"ABC123\"\r\n  },\r\n  \"chofer\": {\r\n    \"apellido\": \"Juarez\",\r\n    \"dni\": 58967854,\r\n    \"nombre\": \"Marcos\"\r\n  },\r\n  \"cliente\": {\r\n    \"contacto\": \"Tilin\",\r\n    \"razonSocial\": \"Tilin\"\r\n  },\r\n  \"producto\": {\r\n    \"descripcion\": \"Gasoil\",\r\n    \"nombre\": \"Gasoil licuado\"\r\n  },\r\n  \"fechaHoraTurno\": \"2021-11-20T02:48:08.467Z\",\r\n  \"preset\": 2400\r\n}",
+					"raw": "{\r\n  \"numeroOrden\": 156,\r\n  \"camion\": {\r\n    \"cisternado\": 2500,\r\n    \"descripcion\": \"Camioncito\",\r\n    \"patente\": \"ABC123\"\r\n  },\r\n  \"chofer\": {\r\n    \"apellido\": \"Juarez\",\r\n    \"dni\": 58967854,\r\n    \"nombre\": \"Marcos\"\r\n  },\r\n  \"cliente\": {\r\n    \"contacto\": \"Tilin\",\r\n    \"razonSocial\": \"Tilin\"\r\n  },\r\n  \"producto\": {\r\n    \"descripcion\": \"Gasoil\",\r\n    \"nombre\": \"Gasoil licuado\"\r\n  },\r\n  \"fechaHoraTurno\": \"2021-11-20T02:48:08.467Z\",\r\n  \"preset\": 9900\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -70,6 +70,166 @@
 					],
 					"path": [
 						"ordenes-carga"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Enviar Tara / Peso Inicial",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.collectionVariables.set(\"password\", jsonData.password);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "XAUTHTOKEN",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numeroOrden\": 156,\r\n    \"pesoInicial\": 2600.0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/ordenes-carga/tara",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ordenes-carga",
+						"tara"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listado ordenes",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "XAUTHTOKEN",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/ordenes-carga",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ordenes-carga"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listado ordenes E4",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "XAUTHTOKEN",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/ordenes-carga/E4",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ordenes-carga",
+						"E4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Adjuntar dato carga",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "XAUTHTOKEN",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/ordenes-carga/carga?numeroOrden={{numeroOrden}}&password={{password}}&masaAcumulada={{masaAcumulada}}&densidad={{densidad}}&temperatura={{temperatura}}&caudal={{caudal}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ordenes-carga",
+						"carga"
+					],
+					"query": [
+						{
+							"key": "numeroOrden",
+							"value": "{{numeroOrden}}"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}"
+						},
+						{
+							"key": "masaAcumulada",
+							"value": "{{masaAcumulada}}"
+						},
+						{
+							"key": "densidad",
+							"value": "{{densidad}}"
+						},
+						{
+							"key": "temperatura",
+							"value": "{{temperatura}}"
+						},
+						{
+							"key": "caudal",
+							"value": "{{caudal}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cargar una orden de carga por ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/ordenes-carga/15",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ordenes-carga",
+						"15"
 					]
 				}
 			},
@@ -103,6 +263,10 @@
 		},
 		{
 			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "password",
 			"value": ""
 		}
 	]

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -141,13 +142,24 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
         OrdenCarga aux;
         try { // VER COMO PUEDO SABER CUAL ES EL ULTIMO
             aux = this.getByNumeroOrden(datosCargaRequest.getNumeroOrden());
-            log.error(aux.toString());
+//            log.error(aux.toString());
             if (aux.getEstado().toString().equals("E2") && aux.getPassword().equals(datosCargaRequest.getPassword())) {
                 log.error("entre");
                 // guardará los datos si está en estado E2, la password es correcta y pasó el periodo de tiempo de guardado
                 if (aux.getFechaHoraFinCarga() == null) aux.setFechaHoraFinCarga(new Date()); // asigno la primera vez la fecha/hora del ultimo registro guardado
                 if (datosCargaRequest.getMasaAcumulada() < aux.getPreset()) { // Si todavia falta para llegar al preset
-                    if (aux.getFechaHoraFinCarga().getTime() > (System.currentTimeMillis() + aux.getFrecuencia())) return "OK"; // No se guarda el registro del dato
+                    Calendar time = Calendar.getInstance();
+                    time.setTime(aux.getFechaHoraFinCarga());
+                    time.add(Calendar.MINUTE, aux.getFrecuencia());
+                    if (time.getTime().after(new Date())) {
+
+
+
+                        // Fin --> 18:20            Frec=2min       llegan cada 1 min
+
+                        log.warn("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO " + datosCargaRequest.getMasaAcumulada());
+                        return "OK";
+                    } // No se guarda el registro del dato
                     aux.setFechaHoraFinCarga(new Date());
                     DatosCarga tmp = DatosCarga.builder()
                             .masaAcumulada(datosCargaRequest.getMasaAcumulada())

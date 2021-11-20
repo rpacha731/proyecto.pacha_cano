@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.iua.iw3.proyecto.pacha_cano.bussiness.IOrdenCargaBusiness;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.*;
 import com.iua.iw3.proyecto.pacha_cano.model.OrdenCarga;
-import com.iua.iw3.proyecto.pacha_cano.model.serializers.OrdenCargaE1JsonSerializer;
-import com.iua.iw3.proyecto.pacha_cano.model.serializers.OrdenCargaE2JsonSerializer;
 import com.iua.iw3.proyecto.pacha_cano.model.serializers.OrdenCargaJsonSerializer;
 import com.iua.iw3.proyecto.pacha_cano.utils.Constant;
 import com.iua.iw3.proyecto.pacha_cano.utils.JsonUtils;
@@ -70,7 +68,7 @@ public class OrdenCargaRestController {
         try {
             OrdenCarga nuevaOrden = ordenCargaBusiness.create(ordenCarga);
             String orden = JsonUtils
-                    .getObjectMapper(OrdenCarga.class, new OrdenCargaE1JsonSerializer(OrdenCarga.class), null)
+                    .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
                             .writeValueAsString(nuevaOrden);
             return new ResponseEntity<>(orden, HttpStatus.CREATED);
         } catch (BusinessException | JsonProcessingException e) {
@@ -84,7 +82,7 @@ public class OrdenCargaRestController {
     public ResponseEntity<String> adjuntarTara (@RequestBody PesoInicialRequest pesoInicialRequest) {
         try {
             String orden = JsonUtils
-                    .getObjectMapper(OrdenCarga.class, new OrdenCargaE2JsonSerializer(OrdenCarga.class), null)
+                    .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
                     .writeValueAsString(ordenCargaBusiness.adjuntarTara(pesoInicialRequest));
             return new ResponseEntity<>(orden, HttpStatus.OK);
         } catch (BusinessException | JsonProcessingException e) {
@@ -95,8 +93,11 @@ public class OrdenCargaRestController {
     }
 
     @PutMapping(value = "ordenes-carga/carga")
-    public ResponseEntity<String> adjuntarDatoCarga (@RequestBody DatosCargaRequest datosCargaRequest) {
+    public ResponseEntity<String> adjuntarDatoCarga (@RequestParam("numeroOrden") long n, @RequestParam("password") int p, @RequestParam("masaAcumulada") double m,
+                                                     @RequestParam("densidad") double d, @RequestParam("temperatura") double t, @RequestParam("caudal") double c) {
         try {
+            DatosCargaRequest datosCargaRequest = DatosCargaRequest.builder()
+                    .numeroOrden(n).password(p).masaAcumulada(m).densidad(d).temperatura(t).caudal(c).build();
             String estado = ordenCargaBusiness.adjuntarDatoCarga(datosCargaRequest);
             log.warn("Estado" + estado);
             if (estado.equals("OK")) return new ResponseEntity<>(estado, HttpStatus.OK);
