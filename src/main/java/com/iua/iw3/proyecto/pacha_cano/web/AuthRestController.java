@@ -5,7 +5,7 @@ import com.iua.iw3.proyecto.pacha_cano.exceptions.NotFoundException;
 import com.iua.iw3.proyecto.pacha_cano.model.accounts.IUserBusiness;
 import com.iua.iw3.proyecto.pacha_cano.model.accounts.User;
 import com.iua.iw3.proyecto.pacha_cano.utils.Constant;
-import com.iua.iw3.proyecto.pacha_cano.utils.LoginRequest;
+import com.iua.iw3.proyecto.pacha_cano.utils.requests.LoginRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

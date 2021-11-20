@@ -10,9 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 
 @Slf4j
-public class OrdenCargaE1JsonSerializer extends StdSerializer<OrdenCarga> {
+public class OrdenCargaE2JsonSerializer extends StdSerializer<OrdenCarga> {
 
-    public OrdenCargaE1JsonSerializer(Class<OrdenCarga> t) { super(t); }
+    public OrdenCargaE2JsonSerializer(Class<OrdenCarga> t) { super(t); }
 
     @Override
     public void serialize(OrdenCarga value, JsonGenerator gen, SerializerProvider provider) throws IOException {
@@ -53,6 +53,10 @@ public class OrdenCargaE1JsonSerializer extends StdSerializer<OrdenCarga> {
             gen.writeStringField("estado", value.getEstado().toString());
             gen.writeStringField("fechaHoraTurno", value.getFechaHoraTurno().toString());
             gen.writeNumberField("preset", value.getPreset());
+            gen.writeNumberField("pesoInicial", value.getPesoInicial());
+            gen.writeNumberField("password", value.getPassword());
+            gen.writeStringField("fechaHoraPesoInicial", value.getFechaHoraPesoInicial().toString());
+
 
         }
         gen.writeEndObject();

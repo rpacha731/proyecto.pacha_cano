@@ -60,7 +60,7 @@ public class OrdenCarga implements Serializable {
 
     // Hasta acá sería el E1
 
-    private Double pesoInicial;
+    private Double pesoInicial; // TARA
 
     @Column (length = 5)
     private Integer password;
