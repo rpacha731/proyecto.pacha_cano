@@ -60,17 +60,19 @@ public class OrdenCargaJsonSerializer extends StdSerializer<OrdenCarga> {
             gen.writeStringField("fechaHoraFinCarga", value.getFechaHoraFinCarga().toString());
             gen.writeStringField("fechaHoraPesoFinal", value.getFechaHoraPesoFinal().toString());
 
+            if (value.getPromedioDatosCarga() != null)
             { // Datos Carga Promedio
                 String datosCargaStr = JsonUtils.getObjectMapper(DatosCarga.class, new DatosCargaJsonSerializer(DatosCarga.class), null)
                         .writeValueAsString(value.getPromedioDatosCarga());
-                gen.writeFieldName("datosCargaProm");
+                gen.writeFieldName("promedioDatosCarga");
                 gen.writeRawValue(datosCargaStr);
             }
 
-            { // Datos Carga Historicos
+            if (value.getRegistroDatosCarga() != null)
+            { // Datos Carga Registro
                 String datosCargaHistoStr = JsonUtils.getObjectMapper(DatosCarga.class, new DatosCargaJsonSerializer(DatosCarga.class), null)
                         .writeValueAsString(value.getRegistroDatosCarga());
-                gen.writeFieldName("datosCargaHistorico");
+                gen.writeFieldName("registroDatosCarga");
                 gen.writeRawValue(datosCargaHistoStr);
             }
 

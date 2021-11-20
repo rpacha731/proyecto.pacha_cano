@@ -41,36 +41,44 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
-        if (o.isEmpty()) throw new NotFoundException("No se encuentra la orden de carga con numero de orden = " + aLong);
+        if (o.isEmpty())
+            return null;// throw new NotFoundException("No se encuentra la orden de carga con numero de orden = " + aLong);
         return o.get();
     }
 
     @Override
     public OrdenCarga create(OrdenCarga object) throws BusinessException, FoundException {
         try {
-            load(object.getId());
-            throw new FoundException("Ya existe una orden de carga con numero de orden = " + object.getId());
+            OrdenCarga o = load(object.getNumeroOrden());
+            if (o != null) {
+                throw new FoundException("Ya existe una orden de carga con numero de orden = " + object.getNumeroOrden());
+            }
+
         } catch (NotFoundException e) {
+            log.error("****************************************************");
+            try {
+                OrdenCarga ordenCarga = OrdenCarga.builder()
+                        .numeroOrden(object.getNumeroOrden())
+                        .camion(object.getCamion())
+                        .chofer(object.getChofer())
+                        .cliente(object.getCliente())
+                        .producto(object.getProducto())
+                        .fechaHoraRecepcion(new Date())
+                        .fechaHoraTurno(object.getFechaHoraTurno())
+                        .preset(object.getPreset())
+                        .estado(Estados.E1)
+                        .frecuencia(1)
+                        .build();
+                return ordenCargaRepository.save(ordenCarga);
+            } catch (Exception f) {
+                log.error(f.getMessage(), f);
+                throw new BusinessException(f);
+            }
         }
-        try {
-            OrdenCarga ordenCarga = OrdenCarga.builder()
-                    .numeroOrden(object.getNumeroOrden())
-                    .camion(object.getCamion())
-                    .chofer(object.getChofer())
-                    .cliente(object.getCliente())
-                    .producto(object.getProducto())
-                    .fechaHoraRecepcion(new Date())
-                    .fechaHoraTurno(object.getFechaHoraTurno())
-                    .preset(object.getPreset())
-                    .estado(Estados.E1)
-                    .frecuencia(1)
-                    .build();
-            return ordenCargaRepository.save(ordenCarga);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            throw new BusinessException(e);
-        }
+        return null;
+        //return ordenCargaRepository.save(ordenCarga);
     }
+
 
     @Override
     public OrdenCarga modify(OrdenCarga object) throws BusinessException, NotFoundException {

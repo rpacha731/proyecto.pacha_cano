@@ -7,7 +7,8 @@ import com.iua.iw3.proyecto.pacha_cano.model.Camion;
 
 import java.io.IOException;
 
-public class CamionJsonSerializer extends StdSerializer<Camion> {
+public class
+CamionJsonSerializer extends StdSerializer<Camion> {
 
     public CamionJsonSerializer (Class<Camion> t) { super(t); }
 
