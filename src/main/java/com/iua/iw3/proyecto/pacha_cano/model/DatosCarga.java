@@ -28,8 +28,4 @@ public class DatosCarga implements Serializable {
     private Double densidad;
 
     private Double caudal;
-
-    @ManyToOne
-    @JoinColumn(name = "orden_id")
-    private OrdenCarga orden;
 }

@@ -50,21 +50,20 @@ public class OrdenCarga implements Serializable {
     private Double pesoFinal;
 
     @Column(nullable = false)
-    private Integer frecuencia; //esto también lo haría con un enum, para que los valores posibles puedan
-    //estar en un select de la página web después
+    private Integer frecuencia; // hacemos una lista estatica
 
     @Column (nullable = false, length = 5)
-    private Integer password;   //falta generar la pswd
+    private Integer password;
 
-    @Column(nullable = false) //ver cómo usar este enum
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Estados estado;
 
     @Column(nullable = false, columnDefinition = "DATETIME")
-    private Date fechaHoraRecepcion; //el Date incluye la hora?
+    private Date fechaHoraRecepcion;
 
     @Column(nullable = false, columnDefinition = "DATETIME")
-    private Date fechaHoraPesoInicial; //recepción del peso inicial
+    private Date fechaHoraPesoInicial;
 
     @Column(nullable = false, columnDefinition = "DATETIME")
     private Date fechaHoraTurno;
@@ -79,14 +78,15 @@ public class OrdenCarga implements Serializable {
     private Date fechaHoraFinCarga;
 
     @Column(nullable = false, columnDefinition = "DATETIME")
-    private Date fechaHoraPesoFinal; //recepción del peso final
+    private Date fechaHoraPesoFinal;
 
     @OneToOne
-    @JoinColumn(name = "datos_carga_prom")
-    private DatosCargaProm datosCargaProm;
+    @JoinColumn(name = "promedio_datos_carga")
+    private DatosCarga promedioDatosCarga;
 
-    @OneToMany(mappedBy = "orden")
-    private List<DatosCarga> datosCargaHistorico;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "registro_datos_carga")
+    private List<DatosCarga> registroDatosCarga;
 
     public static Integer generateRandomPassword () {
         Double aux = 10000 + Math.random() * 90000;

@@ -34,7 +34,6 @@ public class DataLoader implements CommandLineRunner {
     private ChoferRepository choferRepository;
     private ProductoRepository productoRepository;
     private DatosCargaRepository datosCargaRepository;
-    private DatosCargaPromRepository datosCargaPromRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -115,33 +114,31 @@ public class DataLoader implements CommandLineRunner {
                 .caudal(1.256)
                 .build();
 
-        DatosCargaProm datosCargaProm = DatosCargaProm.builder()
-                .masaAcumulada(25000.65)
-                .temperatura(32.21)
-                .densidad(0.98)
-                .caudal(1.256)
-                .build();
-
-        try {
-            camionRepository.save(camion);
-            clienteRepository.save(cliente);
-            choferRepository.save(chofer);
-            productoRepository.save(producto);
-            datosCargaRepository.save(datosCarga);
-            datosCargaPromRepository.save(datosCargaProm);
-        } catch (DataIntegrityViolationException e) {
-            log.error(e.getMessage());
-        }
+//        try {
+//            camionRepository.save(camion);
+//            clienteRepository.save(cliente);
+//            choferRepository.save(chofer);
+//            productoRepository.save(producto);
+//            datosCargaRepository.save(datosCarga);
+//            datosCargaPromRepository.save(datosCargaProm);
+//        } catch (DataIntegrityViolationException e) {
+//            log.error(e.getMessage());
+//        }
 
         List<DatosCarga> listAux = new ArrayList<>();
-        listAux.add(datosCargaRepository.getById(1L));
+        listAux.add(datosCarga);
+
+//        camion = camionRepository.getById(1L);
+//        cliente = clienteRepository.getById(1L);
+//        chofer = choferRepository.getById(1L);
+//        producto = productoRepository.getById(1L);
 
         OrdenCarga ordenCarga = OrdenCarga.builder()
                 .numeroOrden(1L)
-                .camion(camionRepository.getById(1L))
-                .cliente(clienteRepository.getById(1L))
-                .chofer(choferRepository.getById(1L))
-                .producto(productoRepository.getById(1L))
+                .camion(camion)
+                .cliente(cliente)
+                .chofer(chofer)
+                .producto(producto)
                 .pesoInicial(0.235)
                 .pesoFinal(255000.254)
                 .frecuencia(10)
@@ -150,18 +147,19 @@ public class DataLoader implements CommandLineRunner {
                 .fechaHoraRecepcion(new Date())
                 .fechaHoraPesoInicial(new Date())
                 .fechaHoraTurno(new Date())
-                .preset(255000L)
+                .preset(2550L)
                 .fechaHoraInicioCarga(new Date())
                 .fechaHoraFinCarga(new Date())
                 .fechaHoraPesoFinal(new Date())
-                .datosCargaProm(datosCargaPromRepository.getById(1L))
+                .registroDatosCarga(listAux)
+                .promedioDatosCarga(datosCarga)
                 .build();
 
-//        try {
-//            this.ordenCargaRepository.save(ordenCarga);
-//        } catch (DataIntegrityViolationException e) {
-//            log.error(e.getMessage());
-//        }
+        try {
+            this.ordenCargaRepository.save(ordenCarga);
+        } catch (DataIntegrityViolationException e) {
+            log.error(e.getMessage());
+        }
 
 
 
