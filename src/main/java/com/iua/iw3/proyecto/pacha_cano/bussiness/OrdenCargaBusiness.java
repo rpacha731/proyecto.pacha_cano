@@ -149,15 +149,15 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
                 if (aux.getFechaHoraFinCarga() == null) aux.setFechaHoraFinCarga(new Date()); // asigno la primera vez la fecha/hora del ultimo registro guardado
                 if (datosCargaRequest.getMasaAcumulada() < aux.getPreset()) { // Si todavia falta para llegar al preset
                     Calendar time = Calendar.getInstance();
+                    //log.warn("time con getInstance: " + time.getTime());
                     time.setTime(aux.getFechaHoraFinCarga());
-                    time.add(Calendar.MINUTE, aux.getFrecuencia());
+                    //log.warn("time con setTime: " + time.getTime());
+                    time.add(Calendar.SECOND, aux.getFrecuencia());
+                    //log.warn("time con getFrecuencia: " + time.getTime());
                     if (time.getTime().after(new Date())) {
 
-
-
-                        // Fin --> 18:20            Frec=2min       llegan cada 1 min
-
                         log.warn("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO " + datosCargaRequest.getMasaAcumulada());
+
                         return "OK";
                     } // No se guarda el registro del dato
                     aux.setFechaHoraFinCarga(new Date());
