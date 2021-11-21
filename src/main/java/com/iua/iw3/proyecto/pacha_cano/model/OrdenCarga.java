@@ -1,5 +1,7 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@Table(name="ordenes")
+@Table(name = "ordenes")
+@ApiModel(value = "Orden de carga", description = "Clase que describe a la orden de carga")
 public class OrdenCarga implements Serializable {
 
     private static final long serialVersionUID = -4871142170558316526L;
@@ -53,6 +56,7 @@ public class OrdenCarga implements Serializable {
     @Enumerated(EnumType.STRING)
     private Estados estado;
 
+    @ApiModelProperty(notes = "Precio del producto", example = "20.65", required = true, allowableValues = "range[0, 100000000]")
     private Integer frecuencia; // hacemos una lista estatica
 
     @Column(nullable = false, columnDefinition = "DATETIME")

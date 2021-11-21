@@ -13,6 +13,10 @@ import com.iua.iw3.proyecto.pacha_cano.utils.requests.DatosCargaRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.MsgResponse;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoFinalRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoInicialRequest;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,10 +28,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(Constant.URL_BASE)
 @Slf4j
 @AllArgsConstructor
+@Api(value="ordenes-carga", description = "REST Controller de las ordenes de carga de gas liquido")
 public class OrdenCargaRestController {
 
     private IOrdenCargaBusiness ordenCargaBusiness;
 
+    @ApiOperation(value = "Listado completo de las ordenes de carga en todos sus estados")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Listado completo de las ordenes"),
+            @ApiResponse(code = 500, message = "Error del servidor | Error de serialización del listado")
+        }
+    )
     @GetMapping(value = "ordenes-carga", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> listado () {
         try {

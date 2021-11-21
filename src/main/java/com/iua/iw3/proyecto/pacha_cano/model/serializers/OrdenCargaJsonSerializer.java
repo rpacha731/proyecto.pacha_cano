@@ -68,6 +68,13 @@ public class OrdenCargaJsonSerializer extends StdSerializer<OrdenCarga> {
                 gen.writeFieldName("registroDatosCarga");
                 gen.writeRawValue(datosCargaHistoStr);
             }
+
+            { // Datos Carga Promedio
+                String datosCargaStr = JsonUtils.getObjectMapper(DatosCarga.class, new DatosCargaJsonSerializer(DatosCarga.class), null)
+                        .writeValueAsString(value.getPromedioDatosCarga());
+                gen.writeFieldName("promedioDatosCarga");
+                gen.writeRawValue(datosCargaStr);
+            }
         }
         gen.writeEndObject();
     }
