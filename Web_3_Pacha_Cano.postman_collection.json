@@ -218,6 +218,50 @@
 			"response": []
 		},
 		{
+			"name": "Enviar Peso Final",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "XAUTHTOKEN",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numeroOrden\": 155,\r\n    \"pesoFinal\": 36890.0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/ordenes-carga/peso-final",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ordenes-carga",
+						"peso-final"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Cargar una orden de carga por ID",
 			"request": {
 				"method": "GET",
@@ -230,6 +274,50 @@
 					"path": [
 						"ordenes-carga",
 						"15"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cerrar Orden (cancela carga)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "XAUTHTOKEN",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/ordenes-carga/cerrar/155",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ordenes-carga",
+						"cerrar",
+						"155"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Conciliación",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/ordenes-carga/conciliacion/155",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"ordenes-carga",
+						"conciliacion",
+						"155"
 					]
 				}
 			},
