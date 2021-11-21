@@ -79,22 +79,26 @@ public class DataLoader implements CommandLineRunner {
                     .patente("ABC1234")
                     .descripcion("Alto camion papaaaaa")
                     .cisternado(250000L)
+                    .codigoExterno("CAM_1234")
                     .build();
 
             Cliente cliente = Cliente.builder()
-                    .razonSocial("Cliente 1")
-                    .contacto("152568484561")
+                    .razonSocial("Arcor")
+                    .contacto("152568484")
+                    .codigoExterno("ARC1100222")
                     .build();
 
             Chofer chofer = Chofer.builder()
                     .nombre("Nicolas")
                     .apellido("Gómez")
                     .dni(4894891531L)
+                    .codigoExterno("NIC_GOM_531")
                     .build();
 
             Producto producto = Producto.builder()
                     .nombre("Gas Liquido")
                     .descripcion("Gas GNC Liquido Volátil")
+                    .codigoExterno("GNC_LV")
                     .build();
 
             DatosCarga datosCarga = DatosCarga.builder()
@@ -115,6 +119,7 @@ public class DataLoader implements CommandLineRunner {
                     .cliente(cliente)
                     .chofer(chofer)
                     .producto(producto)
+                    .codigoExterno("ORD_001_2021")
                     .pesoInicial(0.235)
                     .pesoFinal(255000.254)
                     .frecuencia(10)
@@ -128,6 +133,7 @@ public class DataLoader implements CommandLineRunner {
                     .fechaHoraFinCarga(new Date())
                     .fechaHoraPesoFinal(new Date())
                     .registroDatosCarga(listAux)
+                    .promedioDatosCarga(datosCarga)
                     .build();
 
             try {

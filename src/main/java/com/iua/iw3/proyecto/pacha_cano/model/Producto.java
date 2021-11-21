@@ -28,4 +28,5 @@ public class Producto implements Serializable {
     @Column(length = 100)
     private String descripcion;
 
+    private String codigoExterno;
 }

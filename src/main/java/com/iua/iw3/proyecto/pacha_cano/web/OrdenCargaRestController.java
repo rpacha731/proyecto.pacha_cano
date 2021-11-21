@@ -120,9 +120,18 @@ public class OrdenCargaRestController {
             String estado = ordenCargaBusiness.adjuntarDatoCarga(datosCargaRequest);
             log.warn("Estado" + estado);
             if (estado.equals("OK")) return new ResponseEntity<>(estado, HttpStatus.OK);
-            if (estado.equals("ORDEN_CERRADA")) return new ResponseEntity<>(estado, HttpStatus.CREATED);
+            if (estado.equals("ORDEN_CERRADA")) return new ResponseEntity<>(estado, HttpStatus.CONFLICT);
             return new ResponseEntity<>(estado, HttpStatus.CONFLICT);
 
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "ordenes-carga/crear-CSV/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> crearCSVOrden (@PathVariable("numOrden") long numeroOrden) {
+        try {
+            return new ResponseEntity<>(ordenCargaBusiness.generateCSVOrdenCarga(numeroOrden), HttpStatus.OK);
         } catch (BusinessException e) {
             return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -31,4 +31,6 @@ public class Camion implements Serializable {
     @Column (nullable = false)
     private Long cisternado;
 
+    private String codigoExterno;
+
 }

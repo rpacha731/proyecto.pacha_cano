@@ -10,6 +10,7 @@ import com.iua.iw3.proyecto.pacha_cano.utils.requests.DatosCargaRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoFinalRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoInicialRequest;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface IOrdenCargaBusiness {
@@ -35,6 +36,8 @@ public interface IOrdenCargaBusiness {
     Conciliacion adjuntarPesoFinal (PesoFinalRequest pesoFinalRequest) throws BusinessException;
 
     Conciliacion generateConciliacion (Long numeroOrden) throws BusinessException;
+
+    String generateCSVOrdenCarga (Long numeroOrden) throws BusinessException;
 
     OrdenCarga modify(OrdenCarga ordenCarga) throws BusinessException, NotFoundException;
 

@@ -31,4 +31,5 @@ public class Chofer implements Serializable {
     @Column(unique = true)
     private Long dni;
 
+    private String codigoExterno;
 }

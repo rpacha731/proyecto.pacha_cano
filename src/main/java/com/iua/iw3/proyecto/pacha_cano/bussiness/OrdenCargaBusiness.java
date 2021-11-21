@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -101,10 +102,10 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             throw new DuplicateException(e);
         }
         try {
-            Optional<Camion> camionAux = camionRepository.findByPatente(ordenCarga.getCamion().getPatente());
-            Optional<Chofer> choferAux = choferRepository.findByDni(ordenCarga.getChofer().getDni());
-            Optional<Cliente> clienteAux = clienteRepository.findByRazonSocial(ordenCarga.getCliente().getRazonSocial());
-            Optional<Producto> productoAux = productoRepository.findByNombre(ordenCarga.getProducto().getNombre());
+            Optional<Camion> camionAux = camionRepository.findByCodigoExterno(ordenCarga.getCamion().getCodigoExterno());
+            Optional<Chofer> choferAux = choferRepository.findByCodigoExterno(ordenCarga.getChofer().getCodigoExterno());
+            Optional<Cliente> clienteAux = clienteRepository.findByCodigoExterno(ordenCarga.getCliente().getCodigoExterno());
+            Optional<Producto> productoAux = productoRepository.findByCodigoExterno(ordenCarga.getProducto().getCodigoExterno());
 
             OrdenCarga orden = OrdenCarga.builder()
                     .numeroOrden(ordenCarga.getNumeroOrden())
@@ -146,52 +147,74 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
     @Override
     public String adjuntarDatoCarga(DatosCargaRequest datosCargaRequest) throws BusinessException {
         OrdenCarga aux;
-        try { // VER COMO PUEDO SABER CUAL ES EL ULTIMO
+        try {
             aux = this.getByNumeroOrden(datosCargaRequest.getNumeroOrden());
-//            log.error(aux.toString());
-            if (aux.getEstado().toString().equals("E2") && aux.getPassword().equals(datosCargaRequest.getPassword())) {
-                log.error("entre");
-                // guardará los datos si está en estado E2, la password es correcta y pasó el periodo de tiempo de guardado
-                if (aux.getFechaHoraInicioCarga() == null) aux.setFechaHoraInicioCarga(new Date()); // asigno la primera vez la fecha/hora del ultimo registro guardado
-                if (aux.getFechaHoraFinCarga() == null) aux.setFechaHoraFinCarga(new Date()); // asigno la primera vez la fecha/hora del ultimo registro guardado
-                if (datosCargaRequest.getMasaAcumulada() < aux.getPreset()) { // Si todavia falta para llegar al preset
+
+            if (aux.getEstado().equals(Estados.E2) && aux.getPassword().equals(datosCargaRequest.getPassword())) {
+                // Guardará los datos si está en estado E2,
+                // el password es correcto y
+                // pasó el periodo de tiempo de guardado (frecuencia de guardado)
+
+                // Asigno la fecha / hora de inicio de carga (cuando llega el primer dato)
+                if (aux.getFechaHoraInicioCarga() == null) aux.setFechaHoraInicioCarga(new Date());
+
+                // Asigno, con la llegada del primer dato, la fecha / hora del último registro guardado
+                // (servirá para calcular la frecuencia de guardado)
+                if (aux.getFechaHoraFinCarga() == null) aux.setFechaHoraFinCarga(new Date());
+
+                // Si la masa acumulada es menor al preset, es decir, todavía no terminé de cargar
+                if (datosCargaRequest.getMasaAcumulada() < aux.getPreset()) {
+
+                    // Calculo si tengo que guardar el valor o no según la frecuencia de guardado
                     Calendar time = Calendar.getInstance();
-                    //log.warn("time con getInstance: " + time.getTime());
                     time.setTime(aux.getFechaHoraFinCarga());
-                    //log.warn("time con setTime: " + time.getTime());
                     time.add(Calendar.SECOND, aux.getFrecuencia());
-                    //log.warn("time con getFrecuencia: " + time.getTime());
-                    if (time.getTime().after(new Date())) {
+                    if (time.getTime().after(new Date())) { return "OK"; } // No se guarda el registro del dato
 
-                        log.warn("NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO " + datosCargaRequest.getMasaAcumulada());
+                    // A partir de aquí, si se guardaría el dato, pero primero verifico la masa y caudal
+                    DatosCarga ultimoGuardado = aux.getRegistroDatosCarga().get(aux.getRegistroDatosCarga().size() - 1);
+                    if (datosCargaRequest.getMasaAcumulada() < ultimoGuardado.getMasaAcumulada()
+                            || datosCargaRequest.getCaudal() <= 0
+                            || datosCargaRequest.getMasaAcumulada() <= 0) { return "OK"; }
+                    // No guardo el dato si se cumple el anterior if.
+                    // El siguiente dato que llegaría, si no cumple el if, se guardaría por el tiempo de guardado
 
-                        return "OK";
-                    } // No se guarda el registro del dato
+                    // Ahora sí, guardo el dato
                     aux.setFechaHoraFinCarga(new Date());
+
+                    // Transformo el request en un dato de carga
                     DatosCarga tmp = DatosCarga.builder()
                             .masaAcumulada(datosCargaRequest.getMasaAcumulada())
                             .densidad(datosCargaRequest.getDensidad())
                             .temperatura(datosCargaRequest.getTemperatura())
                             .caudal(datosCargaRequest.getCaudal()).build();
+
+                    // Agrego el dato y sobreescribo toda la lista de datos
                     aux.getRegistroDatosCarga().add(tmp);
                     aux.setRegistroDatosCarga(aux.getRegistroDatosCarga());
+
+                    // Guardo la orden en la base de datos
                     ordenCargaRepository.save(aux);
-                    log.warn("guarde");
+
                     return "OK";
 
-                } else { // si llegó al preset, cierro la orden
-                    log.warn("*****************");
-                    if (aux.getEstado().toString() == "E2") {
+                } else {
+
+                    // La masa acumulada llegó al preset, por lo que cierro la orden de carga
+                    if (aux.getEstado().equals(Estados.E2)) {
                         aux.setEstado(Estados.E3);
                         ordenCargaRepository.save(aux);
                         return "ORDEN_CERRADA";
                     }
+
+                    // A este return nunca se llegaría, pero el IDE lo pedía ja, ja, ja
                     return "CANCEL";
                 }
 
             } else {
                 throw new BusinessException("La orden no está en estado E2, puede que se haya cancelado | La password es incorrecta. ");
             }
+
         } catch (NotFoundException e) {
             throw new BusinessException(e);
         }
@@ -218,6 +241,27 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             aux.setEstado(Estados.E4);
             aux.setPesoFinal(pesoFinalRequest.getPesoFinal());
 
+            Double [] promedios = new Double[]{0.0, 0.0, 0.0};  // [0] = TEMPERATURA * [1] = DENSIDAD * [2] = CAUDAL
+            for (DatosCarga dato : aux.getRegistroDatosCarga()) {
+                promedios[0] = promedios[0] + dato.getTemperatura();
+                promedios[1] = promedios[1] + dato.getDensidad();
+                promedios[2] = promedios[2] + dato.getCaudal();
+            }
+            int totalRegistros = aux.getRegistroDatosCarga().size();
+            promedios[0] = promedios[0] / totalRegistros;
+            promedios[1] = promedios[1] / totalRegistros;
+            promedios[2] = promedios[2] / totalRegistros;
+
+            Double masaAcum = aux.getRegistroDatosCarga().get(totalRegistros - 1).getMasaAcumulada();
+
+            DatosCarga dato = DatosCarga.builder()
+                    .masaAcumulada(masaAcum)
+                    .temperatura(promedios[0])
+                    .densidad(promedios[1])
+                    .caudal(promedios[2]).build();
+
+            aux.setPromedioDatosCarga(dato);
+
             this.ordenCargaRepository.save(aux);
 
             return generateConciliacion(aux);
@@ -237,42 +281,38 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
         }
     }
 
-    private Conciliacion generateConciliacion (OrdenCarga ordenCarga) {
-        Double [] promedios = new Double[]{0.0, 0.0, 0.0};  // [0] = TEMPERATURA * [1] = DENSIDAD * [2] = CAUDAL
-        for (DatosCarga dato : ordenCarga.getRegistroDatosCarga()) {
-            promedios[0] = promedios[0] + dato.getTemperatura();
-            promedios[1] = promedios[1] + dato.getDensidad();
-            promedios[2] = promedios[2] + dato.getCaudal();
+    @Override
+    public String generateCSVOrdenCarga(Long numeroOrden) throws BusinessException {
+        try {
+            String aux = CreateCSVDatosCarga.generateCSV(numeroOrden);
+            if (aux == null) throw new BusinessException("No se pudo crear el CSV");
+            return "El nombre del CSV es = " + aux + " - Se guardó en el directorio raíz del proyecto";
+        } catch (IOException e) {
+            throw new BusinessException(e);
         }
-        int totalRegistros = ordenCarga.getRegistroDatosCarga().size();
-        promedios[0] = promedios[0] / totalRegistros;
-        promedios[1] = promedios[1] / totalRegistros;
-        promedios[2] = promedios[2] / totalRegistros;
+    }
 
-        Double masaAcum = ordenCarga.getRegistroDatosCarga().get(totalRegistros - 1).getMasaAcumulada();
+    private Conciliacion generateConciliacion (OrdenCarga ordenCarga) {
         Double netoBalanza = ordenCarga.getPesoFinal() - ordenCarga.getPesoInicial();
 
-        DatosCarga dato = DatosCarga.builder()
-                .masaAcumulada(masaAcum)
-                .temperatura(promedios[0])
-                .densidad(promedios[1])
-                .caudal(promedios[2]).build();
+        DatosCarga dato = ordenCarga.getPromedioDatosCarga();
 
         Conciliacion conci = Conciliacion.builder()
                 .numeroOrden(ordenCarga.getNumeroOrden())
                 .pesoInicial(ordenCarga.getPesoInicial())
                 .pesoFinal(ordenCarga.getPesoFinal())
                 .netoBalanza(netoBalanza)
-                .difBalanzaYCaudal(netoBalanza - masaAcum)
+                .difBalanzaYCaudal(netoBalanza - dato.getMasaAcumulada())
                 .promedioDatosCarga(dato).build();
 
         return conci;
     }
 
 
+
     @Override
     public OrdenCarga modify(OrdenCarga ordenCarga) throws BusinessException, NotFoundException {
-        OrdenCarga old = load(ordenCarga.getId());
+        load(ordenCarga.getId());
         try {
             return ordenCargaRepository.save(ordenCarga);
         } catch (Exception e) {

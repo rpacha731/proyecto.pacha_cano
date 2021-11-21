@@ -27,4 +27,5 @@ public class Cliente implements Serializable {
 
     private String contacto;
 
+    private String codigoExterno;
 }

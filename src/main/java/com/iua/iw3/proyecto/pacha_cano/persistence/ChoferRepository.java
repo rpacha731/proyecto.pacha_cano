@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface ChoferRepository extends JpaRepository<Chofer, Long> {
 
     Optional<Chofer> findByDni (Long dni);
+
+    Optional<Chofer> findByCodigoExterno (String codigoExterno);
 }
