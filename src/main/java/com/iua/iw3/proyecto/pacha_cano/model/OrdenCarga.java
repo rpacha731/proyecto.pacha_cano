@@ -87,11 +87,7 @@ public class OrdenCarga implements Serializable {
 
     // Hasta acá sería el E3
 
-    @OneToOne
-    @JoinColumn(name = "promedio_datos_carga")
-    private DatosCarga promedioDatosCarga;
-
-    // Hasta acá sería el E4
+    // El E4 es la conciliación
 
     public static Integer generateRandomPassword () {
         Double aux = 10000 + Math.random() * 90000;

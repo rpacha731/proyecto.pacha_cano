@@ -4,6 +4,7 @@ import com.iua.iw3.proyecto.pacha_cano.exceptions.*;
 import com.iua.iw3.proyecto.pacha_cano.model.*;
 import com.iua.iw3.proyecto.pacha_cano.persistence.*;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.DatosCargaRequest;
+import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoFinalRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoInicialRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +37,15 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
     }
 
     @Override
-    public List<OrdenCarga> listAllEstadoE4() throws BusinessException, NotFoundException {
+    public List<OrdenCarga> listAllByEstado(Integer indiceEstado) throws BusinessException, NotFoundException {
         try {
-            List<OrdenCarga> aux = ordenCargaRepository.findAllByEstado(Estados.E4);
-            if (aux.isEmpty()) throw new NotFoundException("No hay ninguna orden en estado 4");
+            List<OrdenCarga> aux;
+            if (indiceEstado == 1) aux = ordenCargaRepository.findAllByEstado(Estados.E1);
+            else if (indiceEstado == 2) aux = ordenCargaRepository.findAllByEstado(Estados.E2);
+            else if (indiceEstado == 3) aux = ordenCargaRepository.findAllByEstado(Estados.E3);
+            else if (indiceEstado == 4) aux = ordenCargaRepository.findAllByEstado(Estados.E4);
+            else throw new NotFoundException("No existe un estado E" + indiceEstado);
+            if (aux.isEmpty()) throw new NotFoundException("No hay ninguna orden en estado E" + indiceEstado);
             return aux;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -146,6 +152,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             if (aux.getEstado().toString().equals("E2") && aux.getPassword().equals(datosCargaRequest.getPassword())) {
                 log.error("entre");
                 // guardará los datos si está en estado E2, la password es correcta y pasó el periodo de tiempo de guardado
+                if (aux.getFechaHoraInicioCarga() == null) aux.setFechaHoraInicioCarga(new Date()); // asigno la primera vez la fecha/hora del ultimo registro guardado
                 if (aux.getFechaHoraFinCarga() == null) aux.setFechaHoraFinCarga(new Date()); // asigno la primera vez la fecha/hora del ultimo registro guardado
                 if (datosCargaRequest.getMasaAcumulada() < aux.getPreset()) { // Si todavia falta para llegar al preset
                     Calendar time = Calendar.getInstance();
@@ -188,6 +195,78 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
         } catch (NotFoundException e) {
             throw new BusinessException(e);
         }
+    }
+
+    @Override
+    public OrdenCarga cerrarOrden(Long numeroOrden) throws BusinessException, NotFoundException {
+        OrdenCarga old = this.getByNumeroOrden(numeroOrden);
+        if (old.getEstado().equals(Estados.E2)) {
+            old.setEstado(Estados.E3);
+        } else {
+            throw new BusinessException("La orden no se puede cerrar, no está en estado E2");
+        }
+        return this.ordenCargaRepository.save(old);
+    }
+
+    @Override
+    public Conciliacion adjuntarPesoFinal(PesoFinalRequest pesoFinalRequest) throws BusinessException {
+        try {
+            OrdenCarga aux = this.getByNumeroOrden(pesoFinalRequest.getNumeroOrden());
+            if (!aux.getEstado().equals(Estados.E3)) throw new BusinessException("No se puede adjuntar el peso final, la orden no está cerrada");
+
+            aux.setFechaHoraPesoFinal(new Date());
+            aux.setEstado(Estados.E4);
+            aux.setPesoFinal(pesoFinalRequest.getPesoFinal());
+
+            this.ordenCargaRepository.save(aux);
+
+            return generateConciliacion(aux);
+        } catch (NotFoundException e) {
+            throw new BusinessException(e);
+        }
+    }
+
+    @Override
+    public Conciliacion generateConciliacion(Long numeroOrden) throws BusinessException {
+        try {
+            OrdenCarga o = this.getByNumeroOrden(numeroOrden);
+            if (!o.getEstado().equals(Estados.E4)) throw new BusinessException("La orden no está cerrada, no se puede crear a conciliacion");
+            return this.generateConciliacion(o);
+        } catch (NotFoundException e) {
+            throw new BusinessException(e);
+        }
+    }
+
+    private Conciliacion generateConciliacion (OrdenCarga ordenCarga) {
+        Double [] promedios = new Double[]{0.0, 0.0, 0.0};  // [0] = TEMPERATURA * [1] = DENSIDAD * [2] = CAUDAL
+        for (DatosCarga dato : ordenCarga.getRegistroDatosCarga()) {
+            promedios[0] = promedios[0] + dato.getTemperatura();
+            promedios[1] = promedios[1] + dato.getDensidad();
+            promedios[2] = promedios[2] + dato.getCaudal();
+        }
+        int totalRegistros = ordenCarga.getRegistroDatosCarga().size();
+        promedios[0] = promedios[0] / totalRegistros;
+        promedios[1] = promedios[1] / totalRegistros;
+        promedios[2] = promedios[2] / totalRegistros;
+
+        Double masaAcum = ordenCarga.getRegistroDatosCarga().get(totalRegistros - 1).getMasaAcumulada();
+        Double netoBalanza = ordenCarga.getPesoFinal() - ordenCarga.getPesoInicial();
+
+        DatosCarga dato = DatosCarga.builder()
+                .masaAcumulada(masaAcum)
+                .temperatura(promedios[0])
+                .densidad(promedios[1])
+                .caudal(promedios[2]).build();
+
+        Conciliacion conci = Conciliacion.builder()
+                .numeroOrden(ordenCarga.getNumeroOrden())
+                .pesoInicial(ordenCarga.getPesoInicial())
+                .pesoFinal(ordenCarga.getPesoFinal())
+                .netoBalanza(netoBalanza)
+                .difBalanzaYCaudal(netoBalanza - masaAcum)
+                .promedioDatosCarga(dato).build();
+
+        return conci;
     }
 
 

@@ -128,7 +128,6 @@ public class DataLoader implements CommandLineRunner {
                     .fechaHoraFinCarga(new Date())
                     .fechaHoraPesoFinal(new Date())
                     .registroDatosCarga(listAux)
-                    .promedioDatosCarga(datosCarga)
                     .build();
 
             try {

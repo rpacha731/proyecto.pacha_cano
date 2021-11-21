@@ -3,12 +3,15 @@ package com.iua.iw3.proyecto.pacha_cano.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.iua.iw3.proyecto.pacha_cano.bussiness.IOrdenCargaBusiness;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.*;
+import com.iua.iw3.proyecto.pacha_cano.model.Conciliacion;
 import com.iua.iw3.proyecto.pacha_cano.model.OrdenCarga;
+import com.iua.iw3.proyecto.pacha_cano.model.serializers.ConciliacionJsonSerializer;
 import com.iua.iw3.proyecto.pacha_cano.model.serializers.OrdenCargaJsonSerializer;
 import com.iua.iw3.proyecto.pacha_cano.utils.Constant;
 import com.iua.iw3.proyecto.pacha_cano.utils.JsonUtils;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.DatosCargaRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.MsgResponse;
+import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoFinalRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoInicialRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,17 +47,33 @@ public class OrdenCargaRestController {
                     .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
                     .writeValueAsString(ordenCargaBusiness.load(id));
             return new ResponseEntity<>(orden, HttpStatus.OK);
-        } catch (BusinessException | JsonProcessingException | NotFoundException e) {               // SEPARAR NOT FOUND
+        } catch (BusinessException | JsonProcessingException e) {
             return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(new MsgResponse(404, e.getMessage()).toString(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping(value = "ordenes-carga/E4", produces = MediaType.APPLICATION_JSON_VALUE)        //USAR PATH VARIABLE PARA EL NUMERO DE ESTADO
-    public ResponseEntity<String> listadoE4 () {
+    @GetMapping(value = "ordenes-carga/numero-orden/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> loadByNumOrden (@PathVariable("numOrden") long numOrden) {
+        try {
+            String orden = JsonUtils
+                    .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
+                    .writeValueAsString(ordenCargaBusiness.getByNumeroOrden(numOrden));
+            return new ResponseEntity<>(orden, HttpStatus.OK);
+        } catch (BusinessException | JsonProcessingException e) {
+            return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(new MsgResponse(404, e.getMessage()).toString(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(value = "ordenes-carga/E{i}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> listadoE4 (@PathVariable("i") int i) {
         try {
             String listado = JsonUtils
                     .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
-                    .writeValueAsString(ordenCargaBusiness.listAllEstadoE4());
+                    .writeValueAsString(ordenCargaBusiness.listAllByEstado(i));
             return new ResponseEntity<>(listado, HttpStatus.OK);
         } catch (BusinessException | JsonProcessingException e) {
             return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -92,7 +111,7 @@ public class OrdenCargaRestController {
         }
     }
 
-    @PutMapping(value = "ordenes-carga/carga")
+    @PutMapping(value = "ordenes-carga/carga")      // VER QUE SE ASEMEJA MEJOR, SI PUT O POST
     public ResponseEntity<String> adjuntarDatoCarga (@RequestParam("numeroOrden") long n, @RequestParam("password") int p, @RequestParam("masaAcumulada") double m,
                                                      @RequestParam("densidad") double d, @RequestParam("temperatura") double t, @RequestParam("caudal") double c) {
         try {
@@ -105,6 +124,44 @@ public class OrdenCargaRestController {
             return new ResponseEntity<>(estado, HttpStatus.CONFLICT);
 
         } catch (BusinessException e) {
+            return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "ordenes-carga/cerrar/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> cerrarOrden (@PathVariable("numOrden") long numeroOrden) {
+        try {
+            String orden = JsonUtils
+                    .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
+                    .writeValueAsString(ordenCargaBusiness.cerrarOrden(numeroOrden));
+            return new ResponseEntity<>(orden, HttpStatus.OK);
+        } catch (BusinessException | JsonProcessingException e) {
+            return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(new MsgResponse(404, e.getMessage()).toString(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping(value = "ordenes-carga/peso-final", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> adjuntarPesoFinal (@RequestBody PesoFinalRequest pesoFinalRequest) {
+        try {
+            String conciliacion = JsonUtils
+                    .getObjectMapper(Conciliacion.class, new ConciliacionJsonSerializer(Conciliacion.class), null)
+                    .writeValueAsString(ordenCargaBusiness.adjuntarPesoFinal(pesoFinalRequest));
+            return new ResponseEntity<>(conciliacion, HttpStatus.OK);
+        } catch (BusinessException | JsonProcessingException e) {
+            return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "ordenes-carga/conciliacion/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> loadConciliacion (@PathVariable("numOrden") long numOrden) {
+        try {
+            String conciliacion = JsonUtils
+                    .getObjectMapper(Conciliacion.class, new ConciliacionJsonSerializer(Conciliacion.class), null)
+                    .writeValueAsString(ordenCargaBusiness.generateConciliacion(numOrden));
+            return new ResponseEntity<>(conciliacion, HttpStatus.OK);
+        } catch (BusinessException | JsonProcessingException e) {
             return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
