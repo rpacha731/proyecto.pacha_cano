@@ -7,8 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Getter
-@Setter
+@Data
 @Entity
 @NoArgsConstructor
 @Builder

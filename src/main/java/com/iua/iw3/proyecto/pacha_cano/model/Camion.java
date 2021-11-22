@@ -11,8 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Table(name="camiones")
 @ApiModel(value = "Camión", description = "Clase que describe al camión")
 public class Camion implements Serializable {

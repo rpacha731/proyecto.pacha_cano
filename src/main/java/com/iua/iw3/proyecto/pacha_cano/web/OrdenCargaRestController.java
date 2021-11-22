@@ -114,7 +114,7 @@ public class OrdenCargaRestController {
         }
     }
 
-    @ApiOperation(value = "Crear oden de carga")
+    @ApiOperation(value = "Crear orden de carga")
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Orden de carga creada"),
             @ApiResponse(code = 500, message = "Error del servidor"),
@@ -260,7 +260,7 @@ public class OrdenCargaRestController {
             @ApiResponse(code = 404, message = "Orden de carga no encontrada")
     }
     )
-    @PostMapping(value = "ordenes-carga/cambiar-frecuencia", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "ordenes-carga/cambiar-frecuencia", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> cambiarFrecuencia (@RequestParam("numOrden") long numeroOrden, @RequestParam("frecuencia") Integer frecuencia) {
         try {
             String orden = JsonUtils

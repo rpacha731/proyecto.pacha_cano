@@ -22,6 +22,7 @@ import java.util.*;
 public class OrdenCargaBusiness implements IOrdenCargaBusiness {
 
     private OrdenCargaRepository ordenCargaRepository;
+    private DatosCargaRepository datosCargaRepository;
     private CamionRepository camionRepository;
     private ClienteRepository clienteRepository;
     private ChoferRepository choferRepository;
@@ -64,7 +65,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             throw new BusinessException(e);
         }
         if (o.isEmpty())
-            throw new NotFoundException("No se encuentra la orden de carga con número de orden = " + idOrdenCarga);
+            throw new NotFoundException("No se encuentra la orden de carga con id = " + idOrdenCarga);
         return o.get();
     }
 
@@ -184,7 +185,9 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
                         DatosCarga ultimoGuardado = aux.getRegistroDatosCarga().get(aux.getRegistroDatosCarga().size() - 1);
                         if (datosCargaRequest.getMasaAcumulada() < ultimoGuardado.getMasaAcumulada()
                                 || datosCargaRequest.getCaudal() <= 0
-                                || datosCargaRequest.getMasaAcumulada() <= 0) { log.info("No if"); return "OK"; }
+                                || datosCargaRequest.getMasaAcumulada() <= 0
+                                || datosCargaRequest.getDensidad() < 0
+                                || datosCargaRequest.getDensidad() > 1) { log.info("No if"); return "OK"; }
                     }
                     // No guardo el dato si se cumple el anterior if.
                     // El siguiente dato que llegaría, si no cumple el if, se guardaría por el tiempo de guardado
@@ -220,6 +223,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
                     }
 
                     // A este return nunca se llegaría, pero el IDE lo pedía ja, ja, ja
+                    aux = null;
                     return "CANCEL";
                 }
 
@@ -249,8 +253,8 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             if (!aux.getEstado().equals(Estados.E3)) throw new BusinessException("No se puede adjuntar el peso final, la orden no está cerrada");
 
             aux.setFechaHoraPesoFinal(new Date());
-            aux.setEstado(Estados.E4);
             aux.setPesoFinal(pesoFinalRequest.getPesoFinal());
+            aux.setEstado(Estados.E4);
 
             Double [] promedios = new Double[]{0.0, 0.0, 0.0};  // [0] = TEMPERATURA * [1] = DENSIDAD * [2] = CAUDAL
             for (DatosCarga dato : aux.getRegistroDatosCarga()) {
@@ -272,7 +276,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
                     .densidad(promedios[1])
                     .caudal(promedios[2]).build();
 
-            aux.setPromedioDatosCarga(dato);
+            aux.setPromedioDatosCarga(datosCargaRepository.save(dato));
 
             this.ordenCargaRepository.save(aux);
 
@@ -358,7 +362,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             for (int i = 1; i < 1000; i++) {
                 aux = ran.nextInt(5); // el aux es el caudal en cierta forma,
                 // es lo que pasa por el caudalímetro y es la masa que se acumuló
-                masaAcum = masaAcum + ran.nextInt(5);
+                masaAcum = masaAcum + aux;
                 datos[0] = String.valueOf(masaAcum);
 
                 datos[1] = String.valueOf((ran.nextInt(10)/10.0));
@@ -381,19 +385,19 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
     }
 
     @Override
-    public OrdenCarga cambiarFrecuencia(Long idOrdenCarga, Integer frecuencia) throws BusinessException, NotFoundException {
-        load(idOrdenCarga);
+    public OrdenCarga cambiarFrecuencia(Long numeroOrden, Integer frecuencia) throws BusinessException, NotFoundException {
         try {
+            OrdenCarga aux = getByNumeroOrden(numeroOrden);
             if (frecuencia == 1 || frecuencia == 2 || frecuencia == 5 || frecuencia == 10 || frecuencia == 15) {
-                getByNumeroOrden(idOrdenCarga).setFrecuencia(frecuencia);
-                ordenCargaRepository.save(getByNumeroOrden(idOrdenCarga));
-                return getByNumeroOrden(idOrdenCarga);
+                aux.setFrecuencia(frecuencia);
+                ordenCargaRepository.save(aux);
+                return aux;
             } else {
                 throw new BusinessException("La frecuencia especificada no es válida. Pruebe con 1, 2, 5, 10, 15");
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw  new BusinessException(e);
+            throw new BusinessException(e);
         }
     }
 

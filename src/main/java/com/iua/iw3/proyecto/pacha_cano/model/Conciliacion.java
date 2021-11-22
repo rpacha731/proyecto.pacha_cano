@@ -6,8 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor

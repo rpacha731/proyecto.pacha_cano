@@ -16,8 +16,7 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
 @Table(name = "auth_token")
 public class AuthToken implements Serializable {
