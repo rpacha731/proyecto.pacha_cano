@@ -5,6 +5,7 @@ import com.iua.iw3.proyecto.pacha_cano.security.authtoken.IAuthTokenBusiness;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,7 +44,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/**").permitAll();
+        http.authorizeRequests().antMatchers("/login").permitAll()
+                .anyRequest().authenticated()
+                .antMatchers(HttpMethod.GET, "/ordenes-carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                .antMatchers(HttpMethod.GET, "/ordenes-carga/conciliacion*").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                .antMatchers("/ordenes-carga/carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                .antMatchers("/**").hasRole("ROLE_ADMIN");
 
         http.addFilterAfter(new AuthTokenFilter(authTokenBusiness, userBusiness), UsernamePasswordAuthenticationFilter.class);
 
