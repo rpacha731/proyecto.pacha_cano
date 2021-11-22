@@ -27,9 +27,13 @@ public class SwaggerConfig {
 
     private ApiInfo getApiInfo () {
         return new ApiInfoBuilder()
-                .title("Sistema de gestión de ordenes de carga de gas liquido - IW3")
+                .title("Sistema de gestión de órdenes de carga de gas líquido - IW3")
                 .version("1.0.0")
-                .description("") // TODO Rellenar descripción
+                .description("API para gestionar órdenes de carga de gas líquido. Esto se" +
+                        "realiza creand una orden de carga, adjuntando datos como el preset, tara, etc," +
+                        "a la orden de carga. Finalmente se cierra la orden de carga, la cual puede" +
+                        "ser consultada en el futuro. Cada orden de carga pasa por 4 estados: E1, E2," +
+                        "E3 y E4.") // TODO Rellenar descripción
                 .build();
     }
 }
