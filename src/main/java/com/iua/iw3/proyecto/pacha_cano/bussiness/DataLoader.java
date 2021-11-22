@@ -84,8 +84,8 @@ public class DataLoader implements CommandLineRunner {
 
             Cliente cliente = Cliente.builder()
                     .razonSocial("Arcor")
-                    .contacto("152568484")
-                    .codigoExterno("ARC1100222")
+                    .contacto("arc@gmail.com")
+                    .codigoExterno("CLN123")
                     .build();
 
             Chofer chofer = Chofer.builder()

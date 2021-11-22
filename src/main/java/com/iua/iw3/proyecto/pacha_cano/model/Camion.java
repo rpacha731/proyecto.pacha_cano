@@ -1,12 +1,8 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
-import lombok.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -40,7 +36,7 @@ public class Camion implements Serializable {
     private Long cisternado;
 
     @Column(unique = true)
-    @ApiModelProperty(notes = "Código externo del camión", example = "CAM12345", required = true)
+    @ApiModelProperty(notes = "Código externo del camión", example = "CAM_12345", required = true)
     private String codigoExterno;
 
 }

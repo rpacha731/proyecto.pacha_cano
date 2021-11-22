@@ -2,10 +2,7 @@ package com.iua.iw3.proyecto.pacha_cano.security.authtoken;
 
 
 import com.iua.iw3.proyecto.pacha_cano.model.accounts.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
 import org.springframework.util.StringUtils;
 
@@ -19,7 +16,8 @@ import java.util.Date;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @Table(name = "auth_token")
 public class AuthToken implements Serializable {

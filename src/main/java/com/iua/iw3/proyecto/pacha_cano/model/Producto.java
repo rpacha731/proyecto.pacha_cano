@@ -3,10 +3,6 @@ package com.iua.iw3.proyecto.pacha_cano.model;
 import lombok.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,15 +23,15 @@ public class Producto implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ApiModelProperty(notes = "Nombre del producto", example = "Infinity", required = true)
+    @ApiModelProperty(notes = "Nombre del producto", example = "Gas Liquido", required = true)
     @Column(nullable = false, unique = true)
     private String nombre;
 
-    @ApiModelProperty(notes = "Descripción del producto", example = "Eficiencia máxima", required = true)
+    @ApiModelProperty(notes = "Descripción del producto", example = "Gas GNC Liquido Volátil", required = true)
     @Column(length = 100)
     private String descripcion;
 
     @Column(unique = true)
-    @ApiModelProperty(notes = "Código externo del producto", example = "PRD123", required = true)
+    @ApiModelProperty(notes = "Código externo del producto", example = "GNC_LV", required = true)
     private String codigoExterno;
 }

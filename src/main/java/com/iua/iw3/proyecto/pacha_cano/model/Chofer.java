@@ -3,10 +3,6 @@ package com.iua.iw3.proyecto.pacha_cano.model;
 import lombok.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -40,6 +36,6 @@ public class Chofer implements Serializable {
     private Long dni;
 
     @Column(unique = true)
-    @ApiModelProperty(notes = "Código externo del chofer", example = "CHF123", required = true)
+    @ApiModelProperty(notes = "Código externo del chofer", example = "CHF_123 o ALE_CAN_123", required = true)
     private String codigoExterno;
 }

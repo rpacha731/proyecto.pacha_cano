@@ -3,10 +3,6 @@ package com.iua.iw3.proyecto.pacha_cano.model;
 import lombok.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,7 +25,7 @@ public class DatosCarga implements Serializable {
     @ApiModelProperty(notes = "Masa acumulada del dato de carga", example = "30", required = true)
     private Double masaAcumulada;
 
-    @ApiModelProperty(notes = "Temperatura del dato de carga", example = "3", required = true)
+    @ApiModelProperty(notes = "Temperatura del dato de carga", example = "30", required = true)
     private Double temperatura;
 
     @ApiModelProperty(notes = "Densidad del dato de carga", example = "0.11", required = true)
