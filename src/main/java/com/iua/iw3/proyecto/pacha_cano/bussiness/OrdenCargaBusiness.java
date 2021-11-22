@@ -64,7 +64,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             throw new BusinessException(e);
         }
         if (o.isEmpty())
-            throw new NotFoundException("No se encuentra la orden de carga con id = " + idOrdenCarga);
+            throw new NotFoundException("No se encuentra la orden de carga con número de orden = " + idOrdenCarga);
         return o.get();
     }
 
@@ -338,5 +338,21 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
         }
     }
 
+    @Override
+    public OrdenCarga cambiarFrecuencia(Long idOrdenCarga, Integer frecuencia) throws BusinessException, NotFoundException {
+        load(idOrdenCarga);
+        try {
+            if (frecuencia == 1 || frecuencia == 2 || frecuencia == 5 || frecuencia == 10 || frecuencia == 15) {
+                getByNumeroOrden(idOrdenCarga).setFrecuencia(frecuencia);
+                ordenCargaRepository.save(getByNumeroOrden(idOrdenCarga));
+                return getByNumeroOrden(idOrdenCarga);
+            } else {
+                throw new BusinessException("La frecuencia especificada no es válida. Pruebe con 1, 2, 5, 10, 15");
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw  new BusinessException(e);
+        }
+    }
 
 }

@@ -1,6 +1,8 @@
 package com.iua.iw3.proyecto.pacha_cano.model.accounts;
 
 import com.iua.iw3.proyecto.pacha_cano.model.accounts.Rol;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value = "Usuario", description = "Clase que describe al usuario")
 public class User implements UserDetails, Serializable {
 
     private static final long serialVersionUID= -1920138525852395737L;
@@ -29,20 +32,26 @@ public class User implements UserDetails, Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ApiModelProperty(notes = "Nombre del usuario", example = "Alex", required = true)
     @Column(nullable = false)
     private String nombre;
 
+    @ApiModelProperty(notes = "Apellido del usuario", example = "Cano", required = true)
     private String apellido;
 
+    @ApiModelProperty(notes = "Dirección de mail del usuario", example = "alex@gmail.com", required = true)
     @Column(nullable = false, unique = true)
     private String email;
 
+    @ApiModelProperty(notes = "Contraseña del usuario", required = true)
     @Column(nullable = false)
     private String password;
 
+    @ApiModelProperty(notes = "Estado de habilitación de cuenta - 1 (habilitado) - 0 (deshabilitado)", example = "1", required = true)
     @Column(columnDefinition = "TINYINT DEFAULT 1")
     private boolean enabled;
 
+    @ApiModelProperty(notes = "Roles del usuario", required = true)
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles",
             joinColumns = {@JoinColumn(name="user_id", referencedColumnName = "id")},

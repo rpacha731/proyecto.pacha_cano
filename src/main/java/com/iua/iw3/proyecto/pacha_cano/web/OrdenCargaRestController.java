@@ -51,6 +51,13 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Buscar orden de carga por id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Orden de carga encontrada"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+            @ApiResponse(code = 404, message = "Orden de carga no encontrada")
+    }
+    )
     @GetMapping(value = "ordenes-carga/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> load (@PathVariable("id") long id) {
         try {
@@ -65,6 +72,13 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Buscar orden de carga por número de orden")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Orden de carga encontrada"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+            @ApiResponse(code = 404, message = "Orden de carga no encontrada")
+    }
+    )
     @GetMapping(value = "ordenes-carga/numero-orden/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> loadByNumOrden (@PathVariable("numOrden") long numOrden) {
         try {
@@ -79,8 +93,15 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Listar órdenes de carga según el estado")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Listado de órdenes de carga"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+            @ApiResponse(code = 404, message = "No se encontraron órdenes de carga con estado Ei")
+    }
+    )
     @GetMapping(value = "ordenes-carga/E{i}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> listadoE4 (@PathVariable("i") int i) {
+    public ResponseEntity<String> listadoPorEstado (@PathVariable("i") int i) {
         try {
             String listado = JsonUtils
                     .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
@@ -93,6 +114,13 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Crear oden de carga")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Orden de carga creada"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+            @ApiResponse(code = 409, message = "Ya existe una orden de carga con el mismo número de orden")
+    }
+    )
     @PostMapping(value = "ordenes-carga", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> crearOrdenCarga (@RequestBody OrdenCarga ordenCarga) {
         try {
@@ -108,6 +136,13 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Adjuntar tara a una orden de carga")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Tara adjuntada a la orden de carga"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+            @ApiResponse(code = 409, message = "Todavía no es la fecha de carga")
+    }
+    )
     @PutMapping(value = "ordenes-carga/tara", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> adjuntarTara (@RequestBody PesoInicialRequest pesoInicialRequest) {
         try {
@@ -122,6 +157,13 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Adjuntar dato a una orden de carga")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Dato adjuntado a la orden de carga"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+            @ApiResponse(code = 409, message = "Orden cerrada, no se pueden adjuntar más datos")
+    }
+    )
     @PutMapping(value = "ordenes-carga/carga")      // VER QUE SE ASEMEJA MEJOR, SI PUT O POST
     public ResponseEntity<String> adjuntarDatoCarga (@RequestParam("numeroOrden") long n, @RequestParam("password") int p, @RequestParam("masaAcumulada") double m,
                                                      @RequestParam("densidad") double d, @RequestParam("temperatura") double t, @RequestParam("caudal") double c) {
@@ -139,6 +181,12 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Crear un archivo CSV para generar datos de carga")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "CSV creado"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+    }
+    )
     @PostMapping(value = "ordenes-carga/crear-CSV/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> crearCSVOrden (@PathVariable("numOrden") long numeroOrden) {
         try {
@@ -148,6 +196,13 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Cerrar una orden de carga")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Orden de carga cerrada"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+            @ApiResponse(code = 404, message = "Orden de carga no encontrada")
+    }
+    )
     @PostMapping(value = "ordenes-carga/cerrar/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> cerrarOrden (@PathVariable("numOrden") long numeroOrden) {
         try {
@@ -162,6 +217,12 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Adjuntar peso final a la orden de carga")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Peso final adjuntado a la orden de carga"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+    }
+    )
     @PutMapping(value = "ordenes-carga/peso-final", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> adjuntarPesoFinal (@RequestBody PesoFinalRequest pesoFinalRequest) {
         try {
@@ -174,6 +235,12 @@ public class OrdenCargaRestController {
         }
     }
 
+    @ApiOperation(value = "Cargar conciliación de orden de carga")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Conciliación cargada"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+    }
+    )
     @GetMapping(value = "ordenes-carga/conciliacion/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> loadConciliacion (@PathVariable("numOrden") long numOrden) {
         try {
@@ -185,4 +252,26 @@ public class OrdenCargaRestController {
             return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @ApiOperation(value = "Cambiar frecuencia de carga de una orden de carga")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Frecuencia de carga cambiada"),
+            @ApiResponse(code = 500, message = "Error del servidor"),
+            @ApiResponse(code = 404, message = "Orden de carga no encontrada")
+    }
+    )
+    @PostMapping(value = "ordenes-carga/cambiar-frecuencia", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> cambiarFrecuencia (@RequestParam("numOrden") long numeroOrden, @RequestParam("frecuencia") Integer frecuencia) {
+        try {
+            String orden = JsonUtils
+                    .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
+                    .writeValueAsString(ordenCargaBusiness.cambiarFrecuencia(numeroOrden, frecuencia));
+            return new ResponseEntity<>(orden, HttpStatus.OK);
+        } catch (BusinessException | JsonProcessingException e) {
+            return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(new MsgResponse(404, e.getMessage()).toString(), HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

@@ -43,4 +43,6 @@ public interface IOrdenCargaBusiness {
 
     void deleteById(Long idOrdenCarga) throws BusinessException, NotFoundException;
 
+    OrdenCarga cambiarFrecuencia(Long idOrdenCarga, Integer frecuencia) throws BusinessException, NotFoundException;
+
 }
