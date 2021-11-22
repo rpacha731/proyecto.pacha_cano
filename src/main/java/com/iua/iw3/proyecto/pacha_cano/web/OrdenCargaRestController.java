@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(Constant.URL_BASE)
 @Slf4j
 @AllArgsConstructor
-@Api(value="ordenes-carga", description = "REST Controller de las ordenes de carga de gas liquido")
+@Api(value = "ordenes-carga", description = "REST Controller de las ordenes de carga de gas liquido")
 public class OrdenCargaRestController {
 
     private IOrdenCargaBusiness ordenCargaBusiness;

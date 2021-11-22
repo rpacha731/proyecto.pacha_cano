@@ -21,7 +21,6 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .groupName("PC - Pacha - Cano")
                 .apiInfo(getApiInfo());
     }
 
@@ -32,10 +31,11 @@ public class SwaggerConfig {
                 .description("API para gestionar órdenes de carga de gas líquido. Esto se" +
                         "realiza creando una orden de carga, adjuntando datos como el preset, tara, etc," +
                         "a la orden de carga. Finalmente se cierra la orden de carga, la cual puede" +
-                        "ser consultada en el futuro. Cada orden de carga pasa por 4 estados: E1, E2," +
+                        "ser consultada en el futuro. Cada orden de carga pasa por 4 estados: E1, E2, " +
                         "E3 y E4.\n" +
                         "Se utilizó una dependencia llamada Lombok que ayudó bastante a la hora de hacer " +
-                        "getters y setters, constructores y autowired.")
+                        "getters y setters, constructores y autowired.\n" +
+                        "<strong> IMPLEMENTADO POR PACHA, LEONEL Y CANO, ELIANA </strong>")
                 .build();
     }
 }

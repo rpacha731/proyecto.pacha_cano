@@ -6,6 +6,10 @@ import com.iua.iw3.proyecto.pacha_cano.model.accounts.IUserBusiness;
 import com.iua.iw3.proyecto.pacha_cano.model.accounts.User;
 import com.iua.iw3.proyecto.pacha_cano.utils.Constant;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.LoginRequest;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,11 +24,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(Constant.URL_BASE)
 @Slf4j
 @AllArgsConstructor
+@Api(description = "REST Controller para el inicio de sesión y autenticación")
 public class AuthRestController extends UtilsRest {
 
     private IUserBusiness userBusiness;
     private PasswordEncoder passwordEncoder;
 
+    @ApiOperation(value = "Login al servidor",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Login correcto"),
+            @ApiResponse(code = 400, message = "BAD_LOGIN_REQUEST"),
+            @ApiResponse(code = 500, message = "Error del servidor | Error al comprobar credenciales | Credenciales incorrectas")
+    })
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> registro(@RequestBody LoginRequest loginRequest) {
         try {
@@ -46,6 +58,9 @@ public class AuthRestController extends UtilsRest {
         }
     }
 
+    @ApiOperation(value = "Devuelve el usuario actualmente logueado",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponse(code = 200, message = "Descripción del usuario correcta")
     @GetMapping(value = "/auth-info")
     public ResponseEntity<String> authInfo() {
         return new ResponseEntity<>(userToJson(getUserLogged()).toString(), HttpStatus.OK);
