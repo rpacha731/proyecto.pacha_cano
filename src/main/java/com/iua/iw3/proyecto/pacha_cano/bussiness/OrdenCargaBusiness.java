@@ -109,6 +109,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
 
             OrdenCarga orden = OrdenCarga.builder()
                     .numeroOrden(ordenCarga.getNumeroOrden())
+                    .codigoExterno(ordenCarga.getCodigoExterno())
                     .camion(camionAux.isEmpty() ? ordenCarga.getCamion() : camionAux.get())
                     .chofer(choferAux.isEmpty() ? ordenCarga.getChofer() : choferAux.get())
                     .cliente(clienteAux.isEmpty() ? ordenCarga.getCliente() : clienteAux.get())
@@ -150,7 +151,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
         try {
             aux = this.getByNumeroOrden(datosCargaRequest.getNumeroOrden());
 
-            if (aux.getEstado().equals(Estados.E2) && aux.getPassword().equals(datosCargaRequest.getPassword())) {
+            if (aux.getEstado().toString().equals("E2") && aux.getPassword().equals(datosCargaRequest.getPassword())) {
                 // Guardará los datos si está en estado E2,
                 // el password es correcto y
                 // pasó el periodo de tiempo de guardado (frecuencia de guardado)
@@ -164,18 +165,21 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
 
                 // Si la masa acumulada es menor al preset, es decir, todavía no terminé de cargar
                 if (datosCargaRequest.getMasaAcumulada() < aux.getPreset()) {
-
                     // Calculo si tengo que guardar el valor o no según la frecuencia de guardado
                     Calendar time = Calendar.getInstance();
                     time.setTime(aux.getFechaHoraFinCarga());
                     time.add(Calendar.SECOND, aux.getFrecuencia());
-                    if (time.getTime().after(new Date())) { return "OK"; } // No se guarda el registro del dato
+
+                    if (new Date().before(time.getTime()) && aux.getRegistroDatosCarga().size() != 0) {
+                        log.info("NO GUARDÉ " + datosCargaRequest.getMasaAcumulada()); return "OK"; } // No se guarda el registro del dato si todavía no llegué a la frecuencia
 
                     // A partir de aquí, si se guardaría el dato, pero primero verifico la masa y caudal
-                    DatosCarga ultimoGuardado = aux.getRegistroDatosCarga().get(aux.getRegistroDatosCarga().size() - 1);
-                    if (datosCargaRequest.getMasaAcumulada() < ultimoGuardado.getMasaAcumulada()
-                            || datosCargaRequest.getCaudal() <= 0
-                            || datosCargaRequest.getMasaAcumulada() <= 0) { return "OK"; }
+                    if (aux.getRegistroDatosCarga().size() > 0) {
+                        DatosCarga ultimoGuardado = aux.getRegistroDatosCarga().get(aux.getRegistroDatosCarga().size() - 1);
+                        if (datosCargaRequest.getMasaAcumulada() < ultimoGuardado.getMasaAcumulada()
+                                || datosCargaRequest.getCaudal() <= 0
+                                || datosCargaRequest.getMasaAcumulada() <= 0) { log.info("No if"); return "OK"; }
+                    }
                     // No guardo el dato si se cumple el anterior if.
                     // El siguiente dato que llegaría, si no cumple el if, se guardaría por el tiempo de guardado
 
@@ -196,12 +200,14 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
                     // Guardo la orden en la base de datos
                     ordenCargaRepository.save(aux);
 
+                    log.info("Guardé " + datosCargaRequest.getMasaAcumulada());
+
                     return "OK";
 
                 } else {
 
                     // La masa acumulada llegó al preset, por lo que cierro la orden de carga
-                    if (aux.getEstado().equals(Estados.E2)) {
+                    if (aux.getEstado().toString() == "E2") {
                         aux.setEstado(Estados.E3);
                         ordenCargaRepository.save(aux);
                         return "ORDEN_CERRADA";
@@ -214,7 +220,6 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             } else {
                 throw new BusinessException("La orden no está en estado E2, puede que se haya cancelado | La password es incorrecta. ");
             }
-
         } catch (NotFoundException e) {
             throw new BusinessException(e);
         }
