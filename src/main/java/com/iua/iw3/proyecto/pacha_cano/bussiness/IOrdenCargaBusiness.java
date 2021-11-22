@@ -16,7 +16,7 @@ public interface IOrdenCargaBusiness {
 
     List<OrdenCarga> listAll() throws BusinessException;
 
-    List<OrdenCarga> listAllByEstado(Integer indiceEstado) throws BusinessException;
+    List<OrdenCarga> listAllByEstado(Integer indiceEstado) throws BusinessException, NotFoundException;
 
     OrdenCarga load(Long idOrdenCarga) throws BusinessException, NotFoundException;
 

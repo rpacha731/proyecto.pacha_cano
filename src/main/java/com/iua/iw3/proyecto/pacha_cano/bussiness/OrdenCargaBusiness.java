@@ -38,7 +38,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
     }
 
     @Override
-    public List<OrdenCarga> listAllByEstado(Integer indiceEstado) throws BusinessException{
+    public List<OrdenCarga> listAllByEstado(Integer indiceEstado) throws BusinessException, NotFoundException{
         try {
             List<OrdenCarga> aux;
             if (indiceEstado == 1) aux = ordenCargaRepository.findAllByEstado(Estados.E1);
