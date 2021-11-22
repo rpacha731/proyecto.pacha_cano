@@ -1,18 +1,16 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Data
 @Entity
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@Getter
+@Setter
 @Table(name="camiones")
 public class Camion implements Serializable {
 
@@ -31,6 +29,7 @@ public class Camion implements Serializable {
     @Column (nullable = false)
     private Long cisternado;
 
+    @Column(unique = true)
     private String codigoExterno;
 
 }

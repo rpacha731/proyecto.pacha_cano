@@ -10,11 +10,11 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -38,14 +38,14 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
     }
 
     @Override
-    public List<OrdenCarga> listAllByEstado(Integer indiceEstado) throws BusinessException, NotFoundException {
+    public List<OrdenCarga> listAllByEstado(Integer indiceEstado) throws BusinessException{
         try {
             List<OrdenCarga> aux;
             if (indiceEstado == 1) aux = ordenCargaRepository.findAllByEstado(Estados.E1);
             else if (indiceEstado == 2) aux = ordenCargaRepository.findAllByEstado(Estados.E2);
             else if (indiceEstado == 3) aux = ordenCargaRepository.findAllByEstado(Estados.E3);
             else if (indiceEstado == 4) aux = ordenCargaRepository.findAllByEstado(Estados.E4);
-            else throw new NotFoundException("No existe un estado E" + indiceEstado);
+            else throw new BusinessException("No existe un estado E" + indiceEstado);
             if (aux.isEmpty()) throw new NotFoundException("No hay ninguna orden en estado E" + indiceEstado);
             return aux;
         } catch (Exception e) {
@@ -138,7 +138,13 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             aux.setPesoInicial(pesoInicialRequest.getPesoInicial());
             aux.setFechaHoraPesoInicial(new Date());
             aux.setEstado(Estados.E2);
-            aux.setPassword(OrdenCarga.generateRandomPassword());
+
+            Integer passwd;
+            do {
+                passwd = OrdenCarga.generateRandomPassword();
+            } while (this.ordenCargaRepository.findByPassword(passwd).isPresent());
+
+            aux.setPassword(passwd);
             return ordenCargaRepository.save(aux);
         } catch (NotFoundException e) {
             throw new BusinessException(e);
@@ -151,7 +157,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
         try {
             aux = this.getByNumeroOrden(datosCargaRequest.getNumeroOrden());
 
-            if (aux.getEstado().toString().equals("E2") && aux.getPassword().equals(datosCargaRequest.getPassword())) {
+            if (aux.getEstado().equals(Estados.E2) && aux.getPassword().equals(datosCargaRequest.getPassword())) {
                 // Guardará los datos si está en estado E2,
                 // el password es correcto y
                 // pasó el periodo de tiempo de guardado (frecuencia de guardado)
@@ -207,7 +213,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
                 } else {
 
                     // La masa acumulada llegó al preset, por lo que cierro la orden de carga
-                    if (aux.getEstado().toString() == "E2") {
+                    if (aux.getEstado().equals(Estados.E2)) {
                         aux.setEstado(Estados.E3);
                         ordenCargaRepository.save(aux);
                         return "ORDEN_CERRADA";
@@ -290,7 +296,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
     @Override
     public String generateCSVOrdenCarga(Long numeroOrden) throws BusinessException {
         try {
-            String aux = CreateCSVDatosCarga.generateCSV(numeroOrden);
+            String aux = this.generateCSV(numeroOrden);
             if (aux == null) throw new BusinessException("No se pudo crear el CSV");
             return "El nombre del CSV es = " + aux + " - Se guardó en el directorio raíz del proyecto";
         } catch (IOException e) {
@@ -303,15 +309,13 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
 
         DatosCarga dato = ordenCarga.getPromedioDatosCarga();
 
-        Conciliacion conci = Conciliacion.builder()
+        return Conciliacion.builder()
                 .numeroOrden(ordenCarga.getNumeroOrden())
                 .pesoInicial(ordenCarga.getPesoInicial())
                 .pesoFinal(ordenCarga.getPesoFinal())
                 .netoBalanza(netoBalanza)
                 .difBalanzaYCaudal(netoBalanza - dato.getMasaAcumulada())
                 .promedioDatosCarga(dato).build();
-
-        return conci;
     }
 
 
@@ -336,6 +340,44 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
             log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
+    }
+
+    private String generateCSV (Long numOrden) throws IOException {
+        File file = new File("datosCarga-" + numOrden.intValue() + ".csv");
+        if (!file.exists()) {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+            bufferedWriter.write("masaAcumulada,densidad,temperatura,caudal");
+            bufferedWriter.newLine();
+
+            String [] datos = new String[4];
+
+            Random ran = new Random();
+
+            double masaAcum = 0.0, aux, minTemp = 15.0;
+
+            for (int i = 1; i < 1000; i++) {
+                aux = ran.nextInt(5); // el aux es el caudal en cierta forma,
+                // es lo que pasa por el caudalímetro y es la masa que se acumuló
+                masaAcum = masaAcum + ran.nextInt(5);
+                datos[0] = String.valueOf(masaAcum);
+
+                datos[1] = String.valueOf((ran.nextInt(10)/10.0));
+
+                datos[2] = String.valueOf(minTemp + (double) ran.nextInt(35) + (ran.nextInt(10)/10.0));
+
+                datos[3] = String.valueOf(aux);
+
+                bufferedWriter.write(String.join(",", datos));
+                bufferedWriter.newLine();
+            }
+
+            bufferedWriter.close();
+
+            log.info("EXITO - Creando el CSV");
+
+            return file.getName();
+        }
+        return null;
     }
 
 

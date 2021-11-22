@@ -46,7 +46,7 @@ public class UserBusiness implements IUserBusiness {
             load(user.getId());
             loadByEmail(user.getEmail());
             throw new FoundException("Ya existe un usuario con el mail/id = " + user.getEmail() + " / " + user.getId());
-        } catch (NotFoundException n) { }
+        } catch (NotFoundException ignored) { }
         try {
             return userRepository.save(user);
         } catch (Exception e) {

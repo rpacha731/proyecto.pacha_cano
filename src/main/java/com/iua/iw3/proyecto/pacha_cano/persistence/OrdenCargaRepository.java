@@ -15,4 +15,5 @@ public interface OrdenCargaRepository extends JpaRepository<OrdenCarga, Long> {
 
     List<OrdenCarga> findAllByEstado (Estados estados);
 
+    Optional<OrdenCarga> findByPassword (Integer password);
 }

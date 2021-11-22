@@ -1,14 +1,12 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Builder
@@ -31,5 +29,6 @@ public class Chofer implements Serializable {
     @Column(unique = true)
     private Long dni;
 
+    @Column(unique = true)
     private String codigoExterno;
 }

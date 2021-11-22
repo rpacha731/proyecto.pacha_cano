@@ -2,17 +2,15 @@ package com.iua.iw3.proyecto.pacha_cano.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Builder
@@ -97,11 +95,12 @@ public class OrdenCarga implements Serializable {
 
     // El E4 es la conciliación
 
+    @Column(unique = true)
     private String codigoExterno;
 
     public static Integer generateRandomPassword () {
-        Double aux = 10000 + Math.random() * 90000;
-        return aux.intValue();
+        double aux = 10000 + Math.random() * 90000;
+        return (int) aux;
     }
 
 }

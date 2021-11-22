@@ -1,14 +1,12 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Builder
@@ -28,5 +26,6 @@ public class Producto implements Serializable {
     @Column(length = 100)
     private String descripcion;
 
+    @Column(unique = true)
     private String codigoExterno;
 }

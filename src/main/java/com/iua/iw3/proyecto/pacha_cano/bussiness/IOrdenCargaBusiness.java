@@ -10,14 +10,13 @@ import com.iua.iw3.proyecto.pacha_cano.utils.requests.DatosCargaRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoFinalRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoInicialRequest;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface IOrdenCargaBusiness {
 
     List<OrdenCarga> listAll() throws BusinessException;
 
-    List<OrdenCarga> listAllByEstado(Integer indiceEstado) throws BusinessException, NotFoundException;
+    List<OrdenCarga> listAllByEstado(Integer indiceEstado) throws BusinessException;
 
     OrdenCarga load(Long idOrdenCarga) throws BusinessException, NotFoundException;
 
