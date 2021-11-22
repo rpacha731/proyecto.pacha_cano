@@ -252,6 +252,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
                 promedios[1] = promedios[1] + dato.getDensidad();
                 promedios[2] = promedios[2] + dato.getCaudal();
             }
+
             int totalRegistros = aux.getRegistroDatosCarga().size();
             promedios[0] = promedios[0] / totalRegistros;
             promedios[1] = promedios[1] / totalRegistros;

@@ -56,7 +56,7 @@ public class OrdenCarga implements Serializable {
     @Enumerated(EnumType.STRING)
     private Estados estado;
 
-    @ApiModelProperty(notes = "Precio del producto", example = "20.65", required = true, allowableValues = "range[0, 100000000]")
+    @ApiModelProperty(notes = "Precio del producto", example = "20.65", required = true, allowableValues = "1, 2, 5, 10, 15")
     private Integer frecuencia; // hacemos una lista estatica
 
     @Column(nullable = false, columnDefinition = "DATETIME")
