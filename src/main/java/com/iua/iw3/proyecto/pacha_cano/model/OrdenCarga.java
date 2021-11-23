@@ -107,7 +107,7 @@ public class OrdenCarga implements Serializable {
     // Hasta acá sería el E3
 
     @ApiModelProperty(notes = "Promedio de todos los datos de carga (promedio del caudal, temperatura y densidad)", example = "1", required = true)
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "promedio_datos_carga")
     private DatosCarga promedioDatosCarga;
 

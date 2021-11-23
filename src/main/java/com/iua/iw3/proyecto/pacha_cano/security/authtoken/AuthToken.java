@@ -34,9 +34,7 @@ public class AuthToken implements Serializable {
     @Column(columnDefinition = "DATETIME DEFAULT NULL")
     private Date lastUsed;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private User user;
+    private String username;
 
     private Long requestCount;
 
@@ -48,7 +46,7 @@ public class AuthToken implements Serializable {
     }
 
     public AuthToken (User user, Date toDate) {
-        setUser(user);
+        setUsername(user.getUsername());
         setToDate(toDate);
         setLastUsed(new Date());
         setSeries(generateSeriesData());
@@ -93,7 +91,7 @@ public class AuthToken implements Serializable {
     public String toString() {
         return String.format(
                 "Token: serie=%s, user=%s, tokenValue=%s, lastUsed=%s, requestCount=%s, valid=%s",
-                getSeries(), getUser(), encodeTokenValue(), getLastUsed(), getRequestCount(), valid());
+                getSeries(), getUsername(), encodeTokenValue(), getLastUsed(), getRequestCount(), valid());
     }
 
     public boolean valid() {

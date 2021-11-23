@@ -61,7 +61,7 @@ public class AuthRestController extends UtilsRest {
     @ApiOperation(value = "Devuelve el usuario actualmente logueado",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(code = 200, message = "Descripción del usuario correcta")
-    @GetMapping(value = "/auth-info")
+    @GetMapping(value = "/auth-info", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> authInfo() {
         return new ResponseEntity<>(userToJson(getUserLogged()).toString(), HttpStatus.OK);
     }

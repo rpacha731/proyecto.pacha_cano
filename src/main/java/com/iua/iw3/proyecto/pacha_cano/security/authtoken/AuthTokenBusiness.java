@@ -72,10 +72,8 @@ public class AuthTokenBusiness implements IAuthTokenBusiness {
      */
     private Date fechaExpiracion() {
         Calendar calendar = Calendar.getInstance();
-        Date date = new Date();
-        calendar.setTime(date);
-        calendar.add(Calendar.SECOND, 60);
-        date = calendar.getTime();
-        return date;
+        calendar.setTime(new Date());
+        calendar.add(Calendar.HOUR, 24);
+        return calendar.getTime();
     }
 }

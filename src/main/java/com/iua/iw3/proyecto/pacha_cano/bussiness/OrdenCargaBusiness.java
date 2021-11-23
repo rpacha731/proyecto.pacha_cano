@@ -276,7 +276,7 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
                     .densidad(promedios[1])
                     .caudal(promedios[2]).build();
 
-            aux.setPromedioDatosCarga(datosCargaRepository.save(dato));
+            aux.setPromedioDatosCarga(dato);
 
             this.ordenCargaRepository.save(aux);
 

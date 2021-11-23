@@ -2,6 +2,7 @@ package com.iua.iw3.proyecto.pacha_cano.security;
 
 import com.iua.iw3.proyecto.pacha_cano.model.accounts.IUserBusiness;
 import com.iua.iw3.proyecto.pacha_cano.security.authtoken.IAuthTokenBusiness;
+import com.iua.iw3.proyecto.pacha_cano.utils.Constant;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,12 +45,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/login").permitAll()
-                .anyRequest().authenticated()
-                .antMatchers(HttpMethod.GET, "/ordenes-carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-                .antMatchers(HttpMethod.GET, "/ordenes-carga/conciliacion*").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-                .antMatchers("/ordenes-carga/carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-                .antMatchers("/**").hasRole("ROLE_ADMIN");
+        http.authorizeRequests().antMatchers(Constant.URL_BASE + "/login").permitAll()
+                .antMatchers("/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration-security",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/webjars/**").permitAll()
+//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga/conciliacion*").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+//                .antMatchers(Constant.URL_BASE + "/ordenes-carga/carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+//                .antMatchers(Constant.URL_BASE + "/**").hasAnyRole("ROLE_ADMIN")
+                .anyRequest().authenticated();
 
         http.addFilterAfter(new AuthTokenFilter(authTokenBusiness, userBusiness), UsernamePasswordAuthenticationFilter.class);
 
