@@ -36,7 +36,7 @@ public class AuthToken implements Serializable {
 
     private String username;
 
-    private Long requestCount;
+    private Long requestCount = 0L;
 
     @Transient
     private SecureRandom random = new SecureRandom();

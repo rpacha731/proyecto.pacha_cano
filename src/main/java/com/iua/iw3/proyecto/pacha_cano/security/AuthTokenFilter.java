@@ -105,13 +105,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         try {
             authToken.setLastUsed(new Date());
-//            authToken.addRequest();
+            authToken.addRequest();
             authTokenBusiness.saveToken(authToken);
             String username = authToken.getUsername();
             User u ;
             try {
                 u = userBusiness.loadByEmail(username);
-                log.info("Token para usuario {} ({}) [{}]", u.getUsername(), token, request.getRequestURI());
+                log.info("Token para usuario {} ({}) [{}] {}", u.getUsername(), token, request.getRequestURI(), request.getMethod());
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, null,
                         u.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);

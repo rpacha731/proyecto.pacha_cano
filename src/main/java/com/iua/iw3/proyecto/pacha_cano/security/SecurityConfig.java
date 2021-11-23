@@ -25,7 +25,9 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(
+        //securedEnabled = true,
+        prePostEnabled = true)
 @AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -45,7 +47,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+//        http.authorizeRequests().antMatchers(Constant.URL_BASE + "/login").permitAll()
+//                .antMatchers(Constant.URL_BASE + "/auth-info").permitAll()
+//                .antMatchers("/v2/api-docs",
+//                        "/configuration/ui",
+//                        "/swagger-resources/**",
+//                        "/configuration-security",
+//                        "/swagger-ui.html",
+//                        "/swagger-ui/**",
+//                        "/webjars/**").permitAll();
+//        http.authorizeRequests().antMatchers(HttpMethod.POST, "**/ordenes-carga").hasAnyRole("ADMIN");
+//        http.authorizeRequests().antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga").hasAnyRole("USER", "ADMIN")
+//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga/conciliacion*").hasAnyRole("USER", "ADMIN")
+//                .antMatchers(Constant.URL_BASE + "/ordenes-carga/carga").hasAnyRole("USER", "ADMIN")
+//                .anyRequest().authenticated();
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "**/ordenes-carga").hasAnyRole("ADMIN");
         http.authorizeRequests().antMatchers(Constant.URL_BASE + "/login").permitAll()
+                .antMatchers(Constant.URL_BASE + "/auth-info").permitAll()
                 .antMatchers("/v2/api-docs",
                         "/configuration/ui",
                         "/swagger-resources/**",

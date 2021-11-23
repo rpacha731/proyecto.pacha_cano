@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -119,8 +120,8 @@ public class OrdenCargaRestController {
             @ApiResponse(code = 201, message = "Orden de carga creada"),
             @ApiResponse(code = 500, message = "Error del servidor"),
             @ApiResponse(code = 409, message = "Ya existe una orden de carga con el mismo número de orden")
-    }
-    )
+    })
+    //@Secured("ROLE_ADMIN")
     @PostMapping(value = "ordenes-carga", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> crearOrdenCarga (@RequestBody OrdenCarga ordenCarga) {
         try {

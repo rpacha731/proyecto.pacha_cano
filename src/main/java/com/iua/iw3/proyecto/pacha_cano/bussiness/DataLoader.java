@@ -13,10 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -64,11 +61,28 @@ public class DataLoader implements CommandLineRunner {
                     .apellido("IW3")
                     .enabled(true)
                     .email("pc@pc.com")
-                    .password(passwordEncoder.encode("olis1234"))
+                    .password(passwordEncoder.encode("olis12345"))
                     .roles(roles)
                     .build();
             try {
                 userRepository.save(admin);
+            } catch (DataIntegrityViolationException e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        if (userRepository.findFirstByEmail("user@pc.com").isEmpty()) {
+            Set<Rol> rol = new HashSet<>();
+            rol.add(rolRepository.findByNombre("ROLE_USER").get());
+            User user = User.builder()
+                    .nombre("User 1")
+                    .apellido("super")
+                    .enabled(true)
+                    .email("user@pc.com")
+                    .password(passwordEncoder.encode("12345"))
+                    .roles(rol).build();
+            try {
+                userRepository.save(user);
             } catch (DataIntegrityViolationException e) {
                 log.error(e.getMessage());
             }
