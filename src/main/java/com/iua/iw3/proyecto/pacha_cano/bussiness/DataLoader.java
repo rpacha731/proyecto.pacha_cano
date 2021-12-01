@@ -147,7 +147,10 @@ public class DataLoader implements CommandLineRunner {
                     .fechaHoraFinCarga(new Date())
                     .fechaHoraPesoFinal(new Date())
                     .registroDatosCarga(listAux)
-                    .promedioDatosCarga(datosCarga)
+                    .masaAcumuladaTotal(250154.05)
+                    .temperaturaPromedio(15.5)
+                    .densidadPromedio(0.5)
+                    .caudalPromedio(2.5)
                     .build();
 
             try {

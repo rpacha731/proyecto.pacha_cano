@@ -30,6 +30,15 @@ public class Conciliacion implements Serializable {
     @ApiModelProperty(notes = "Resta entre netoBalanza y última masa acumulada", example = "123000", required = true)
     private Double difBalanzaYCaudal;
 
-    @ApiModelProperty(notes = "Promedio de temperatura, promedio de densidad y promedio de caudal", required = true)
-    private DatosCarga promedioDatosCarga;
+    @ApiModelProperty(notes = "Masa acumulada total al cerrar la carga", example = "30")
+    private Double masaAcumuladaTotal;
+
+    @ApiModelProperty(notes = "Temperatura promedio", example = "30")
+    private Double temperaturaPromedio;
+
+    @ApiModelProperty(notes = "Densidad promedio", example = "0.11")
+    private Double densidadPromedio;
+
+    @ApiModelProperty(notes = "Caudal promedio", example = "11.2")
+    private Double caudalPromedio;
 }

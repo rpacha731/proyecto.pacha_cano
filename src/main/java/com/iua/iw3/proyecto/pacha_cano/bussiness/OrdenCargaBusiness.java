@@ -22,7 +22,6 @@ import java.util.*;
 public class OrdenCargaBusiness implements IOrdenCargaBusiness {
 
     private OrdenCargaRepository ordenCargaRepository;
-    private DatosCargaRepository datosCargaRepository;
     private CamionRepository camionRepository;
     private ClienteRepository clienteRepository;
     private ChoferRepository choferRepository;
@@ -134,8 +133,11 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
         OrdenCarga aux;
         try {
             aux = this.getByNumeroOrden(pesoInicialRequest.getNumeroOrden());
-            if (System.currentTimeMillis() <= aux.getFechaHoraTurno().getTime())
-                throw new WrongDateException("Todavia no es la fecha / hora del turno de la orden con numero de orden = " + aux.getNumeroOrden());
+            Calendar time = Calendar.getInstance();
+            time.setTime(aux.getFechaHoraTurno());
+            time.add(Calendar.HOUR, 72);
+            if (System.currentTimeMillis() <= aux.getFechaHoraTurno().getTime() && System.currentTimeMillis() >= time.getTimeInMillis())
+                throw new WrongDateException("Todavia no es la fecha / hora del turno (o venció) de la orden con numero de orden = " + aux.getNumeroOrden());
             aux.setPesoInicial(pesoInicialRequest.getPesoInicial());
             aux.setFechaHoraPesoInicial(new Date());
             aux.setEstado(Estados.E2);
@@ -270,13 +272,10 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
 
             Double masaAcum = aux.getRegistroDatosCarga().get(totalRegistros - 1).getMasaAcumulada();
 
-            DatosCarga dato = DatosCarga.builder()
-                    .masaAcumulada(masaAcum)
-                    .temperatura(promedios[0])
-                    .densidad(promedios[1])
-                    .caudal(promedios[2]).build();
-
-            aux.setPromedioDatosCarga(dato);
+            aux.setMasaAcumuladaTotal(masaAcum);
+            aux.setTemperaturaPromedio(promedios[0]);
+            aux.setDensidadPromedio(promedios[1]);
+            aux.setCaudalPromedio(promedios[2]);
 
             this.ordenCargaRepository.save(aux);
 
@@ -311,15 +310,16 @@ public class OrdenCargaBusiness implements IOrdenCargaBusiness {
     private Conciliacion generateConciliacion (OrdenCarga ordenCarga) {
         Double netoBalanza = ordenCarga.getPesoFinal() - ordenCarga.getPesoInicial();
 
-        DatosCarga dato = ordenCarga.getPromedioDatosCarga();
-
         return Conciliacion.builder()
                 .numeroOrden(ordenCarga.getNumeroOrden())
                 .pesoInicial(ordenCarga.getPesoInicial())
                 .pesoFinal(ordenCarga.getPesoFinal())
                 .netoBalanza(netoBalanza)
-                .difBalanzaYCaudal(netoBalanza - dato.getMasaAcumulada())
-                .promedioDatosCarga(dato).build();
+                .difBalanzaYCaudal(netoBalanza - ordenCarga.getMasaAcumuladaTotal())
+                .masaAcumuladaTotal(ordenCarga.getMasaAcumuladaTotal())
+                .temperaturaPromedio(ordenCarga.getTemperaturaPromedio())
+                .densidadPromedio(ordenCarga.getDensidadPromedio())
+                .caudalPromedio(ordenCarga.getCaudalPromedio()).build();
     }
 
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -29,6 +30,11 @@ public class AuthTokenBusiness implements IAuthTokenBusiness {
         AuthToken aux = new AuthToken(userRepository.findFirstByEmail(userEmail).get(), this.fechaExpiracion());
         this.authTokenRepository.save(aux);
         return aux;
+    }
+
+    @Override
+    public Optional<AuthToken> getAuthtokenByUser(User user) {
+        return this.authTokenRepository.findByUsername(user.getUsername());
     }
 
     @Override

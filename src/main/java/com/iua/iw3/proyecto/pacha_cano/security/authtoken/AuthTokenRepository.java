@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.Date;
+import java.util.Optional;
 
 @Repository
 public interface AuthTokenRepository extends JpaRepository<AuthToken, String> {
@@ -16,4 +17,5 @@ public interface AuthTokenRepository extends JpaRepository<AuthToken, String> {
     @Query(value = "DELETE FROM auth_token WHERE to_date < ?", nativeQuery = true)
     void purgeToDate(Date toDate);
 
+    Optional<AuthToken> findByUsername(String username);
 }

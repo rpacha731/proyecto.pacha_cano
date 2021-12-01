@@ -20,6 +20,7 @@ public class DatosCargaJsonSerializer extends StdSerializer<DatosCarga> {
             gen.writeNumberField("temperatura", value.getTemperatura());
             gen.writeNumberField("densidad", value.getDensidad());
             gen.writeNumberField("caudal", value.getCaudal());
+            gen.writeStringField("estampaTiempo", value.getEstampaTiempo().toString());
         }
         gen.writeEndObject();
     }

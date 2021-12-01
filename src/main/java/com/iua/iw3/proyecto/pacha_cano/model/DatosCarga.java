@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @Entity
@@ -32,4 +33,7 @@ public class DatosCarga implements Serializable {
 
     @ApiModelProperty(notes = "Caudal del dato de carga", example = "11.2", required = true)
     private Double caudal;
+
+    @ApiModelProperty(notes = "Fecha / hora en la que se guardó el dato", example = "11.2")
+    private Date estampaTiempo;
 }

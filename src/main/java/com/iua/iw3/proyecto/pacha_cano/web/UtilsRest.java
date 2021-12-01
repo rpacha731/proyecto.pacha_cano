@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor
@@ -28,7 +29,13 @@ public class UtilsRest {
     }
 
     protected JSONObject userToJson(User user) {
-        AuthToken token = authTokenBusiness.generateAuthToken(user);
+        Optional<AuthToken> o = authTokenBusiness.getAuthtokenByUser(user);
+        AuthToken token;
+        if (o.isEmpty())
+            token = authTokenBusiness.generateAuthToken(user);
+        else
+            token = o.get();
+//        AuthToken token = authTokenBusiness.generateAuthToken(user);
         String tokenEncrip = token.encodeTokenValue();
         JSONObject j = new JSONObject();
         j.put("username", user.getUsername());

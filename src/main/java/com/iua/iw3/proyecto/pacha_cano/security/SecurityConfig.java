@@ -90,7 +90,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowCredentials(true);
+//        configuration.setAllowCredentials(true);
+//        configuration.addAllowedOriginPattern("*");
         configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
                 "Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin", "Cache-Control",
                 "Content-Type", "Authorization", "XAUTHTOKEN", "X-Requested-With", "X-AUTH-TOKEN"));

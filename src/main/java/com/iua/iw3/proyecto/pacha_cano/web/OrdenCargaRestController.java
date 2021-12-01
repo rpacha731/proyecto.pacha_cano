@@ -24,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping(Constant.URL_BASE)
@@ -188,7 +189,8 @@ public class OrdenCargaRestController {
             @ApiResponse(code = 500, message = "Error del servidor"),
     }
     )
-    @PostMapping(value = "ordenes-carga/crear-CSV/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiIgnore
+    @PostMapping(value = "/test/crear-CSV/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> crearCSVOrden (@PathVariable("numOrden") long numeroOrden) {
         try {
             return new ResponseEntity<>(ordenCargaBusiness.generateCSVOrdenCarga(numeroOrden), HttpStatus.OK);
@@ -211,10 +213,12 @@ public class OrdenCargaRestController {
                     .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
                     .writeValueAsString(ordenCargaBusiness.cerrarOrden(numeroOrden));
             return new ResponseEntity<>(orden, HttpStatus.OK);
-        } catch (BusinessException | JsonProcessingException e) {
-            return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(new MsgResponse(409, e.getMessage()).toString(), HttpStatus.CONFLICT);
         } catch (NotFoundException e) {
             return new ResponseEntity<>(new MsgResponse(404, e.getMessage()).toString(), HttpStatus.NOT_FOUND);
+        } catch (JsonProcessingException e) {
+            return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -69,12 +69,12 @@ public class OrdenCargaJsonSerializer extends StdSerializer<OrdenCarga> {
                 gen.writeRawValue(datosCargaHistoStr);
             }
 
-            { // Datos Carga Promedio
-                String datosCargaStr = JsonUtils.getObjectMapper(DatosCarga.class, new DatosCargaJsonSerializer(DatosCarga.class), null)
-                        .writeValueAsString(value.getPromedioDatosCarga());
-                gen.writeFieldName("promedioDatosCarga");
-                gen.writeRawValue(datosCargaStr);
-            }
+            // Promedios y masa acumulada final
+            gen.writeStringField("masaAcumuladaTotal", value.getMasaAcumuladaTotal() == null ? "null" : value.getMasaAcumuladaTotal().toString());
+            gen.writeStringField("temperaturaPromedio", value.getTemperaturaPromedio() == null ? "null" : value.getTemperaturaPromedio().toString());
+            gen.writeStringField("densidadPromedio", value.getDensidadPromedio() == null ? "null" : value.getDensidadPromedio().toString());
+            gen.writeStringField("caudalPromedio", value.getCaudalPromedio() == null ? "null" : value.getCaudalPromedio().toString());
+
         }
         gen.writeEndObject();
     }
