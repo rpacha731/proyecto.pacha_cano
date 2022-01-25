@@ -10,6 +10,8 @@ import java.io.IOException;
 public class
 CamionJsonSerializer extends StdSerializer<Camion> {
 
+    public CamionJsonSerializer () { this(null); }
+
     public CamionJsonSerializer (Class<Camion> t) { super(t); }
 
     @Override

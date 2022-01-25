@@ -1,5 +1,7 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.iua.iw3.proyecto.pacha_cano.model.serializers.CamionJsonSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -13,6 +15,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @Table(name="camiones")
+@JsonSerialize(using = CamionJsonSerializer.class)
 @ApiModel(value = "Camión", description = "Clase que describe al camión")
 public class Camion implements Serializable {
 

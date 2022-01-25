@@ -30,6 +30,34 @@ public class AuthRestController extends UtilsRest {
     private IUserBusiness userBusiness;
     private PasswordEncoder passwordEncoder;
 
+    @ApiOperation(value = "Registro en el servidor",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Registro correcto"),
+            @ApiResponse(code = 400, message = "BAD_SIGNUP_REQUEST"),
+            @ApiResponse(code = 500, message = "Error del servidor | Error al comprobar credenciales | Credenciales incorrectas")
+    })
+    @PostMapping(value = "/sign-up", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> registro(@RequestBody LoginRequest loginRequest) {
+        try {
+            User user = userBusiness.loadByEmail(loginRequest.getUserEmail());
+            String msj = user.checkAccount(passwordEncoder, loginRequest.getPassword());
+            if (msj != null) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            } else {
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null,
+                        user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                return new ResponseEntity<>(userToJson(getUserLogged()).toString(), HttpStatus.OK);
+            }
+        } catch (BusinessException e) {
+            log.error(e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>("BAD_LOGIN_REQUEST", HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @ApiOperation(value = "Login al servidor",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
@@ -38,7 +66,7 @@ public class AuthRestController extends UtilsRest {
             @ApiResponse(code = 500, message = "Error del servidor | Error al comprobar credenciales | Credenciales incorrectas")
     })
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> registro(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
         try {
             User user = userBusiness.loadByEmail(loginRequest.getUserEmail());
             String msj = user.checkAccount(passwordEncoder, loginRequest.getPassword());

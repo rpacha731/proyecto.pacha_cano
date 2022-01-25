@@ -35,5 +35,6 @@ public class DatosCarga implements Serializable {
     private Double caudal;
 
     @ApiModelProperty(notes = "Fecha / hora en la que se guardó el dato", example = "11.2")
+    @Column(columnDefinition = "DATETIME DEFAULT NULL")
     private Date estampaTiempo;
 }

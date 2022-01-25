@@ -26,6 +26,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(Constant.URL_BASE)
 @Slf4j
@@ -42,13 +44,16 @@ public class OrdenCargaRestController {
         }
     )
     @GetMapping(value = "ordenes-carga", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> listado () {
+    public ResponseEntity<?> listado () {
+        List<OrdenCarga> listadito;
         try {
-            String listado = JsonUtils
-                    .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
-                    .writeValueAsString(ordenCargaBusiness.listAll());
-            return new ResponseEntity<>(listado, HttpStatus.OK);
-        } catch (BusinessException | JsonProcessingException e) {
+            listadito = this.ordenCargaBusiness.listAll();
+//            String listado = JsonUtils
+//                    .getObjectMapper(OrdenCarga.class, new OrdenCargaJsonSerializer(OrdenCarga.class), null)
+//                    .writeValueAsString(listadito);
+//            return new ResponseEntity<>(listado, HttpStatus.OK);
+            return new ResponseEntity<>(listadito, HttpStatus.OK);
+        } catch (BusinessException e) {
             return new ResponseEntity<>(new MsgResponse(500, e.getMessage()).toString(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

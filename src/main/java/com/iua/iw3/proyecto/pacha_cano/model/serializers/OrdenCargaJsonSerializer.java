@@ -21,12 +21,14 @@ public class OrdenCargaJsonSerializer extends StdSerializer<OrdenCarga> {
             gen.writeNumberField("id", value.getId());
             gen.writeNumberField("numeroOrden", value.getNumeroOrden());
 
-            { //Camion
-                String camionStr = JsonUtils.getObjectMapper(Camion.class, new CamionJsonSerializer(Camion.class), null)
-                        .writeValueAsString(value.getCamion());
-                gen.writeFieldName("camion");
-                gen.writeRawValue(camionStr);
-            }
+            gen.writeObjectField("camion", value.getCamion());
+
+//            { //Camion
+//                String camionStr = JsonUtils.getObjectMapper(Camion.class, new CamionJsonSerializer(Camion.class), null)
+//                        .writeValueAsString(value.getCamion());
+//                gen.writeFieldName("camion");
+//                gen.writeRawValue(camionStr);
+//            }
 
             { //Cliente
                 String clienteStr = JsonUtils.getObjectMapper(Cliente.class, new ClienteJsonSerializer(Cliente.class), null)
