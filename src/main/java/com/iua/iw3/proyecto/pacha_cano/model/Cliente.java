@@ -1,5 +1,7 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.iua.iw3.proyecto.pacha_cano.model.serializers.ClienteJsonSerializer;
 import lombok.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,6 +15,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @Table(name="clientes")
+@JsonSerialize(using = ClienteJsonSerializer.class)
 @ApiModel(value = "Cliente", description = "Clase que describe al cliente")
 public class Cliente implements Serializable {
 

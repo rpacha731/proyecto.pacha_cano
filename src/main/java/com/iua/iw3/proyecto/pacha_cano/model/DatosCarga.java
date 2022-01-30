@@ -1,5 +1,7 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.iua.iw3.proyecto.pacha_cano.model.serializers.DatosCargaJsonSerializer;
 import lombok.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -13,6 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@JsonSerialize(using = DatosCargaJsonSerializer.class)
 @ApiModel(value = "Dato de carga", description = "Clase que describe al dato de carga")
 public class DatosCarga implements Serializable {
 

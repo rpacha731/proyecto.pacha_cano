@@ -1,5 +1,7 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.iua.iw3.proyecto.pacha_cano.model.serializers.OrdenCargaJsonSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -15,6 +17,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @Table(name = "ordenes")
+@JsonSerialize(using = OrdenCargaJsonSerializer.class)
 @ApiModel(value = "Orden de carga", description = "Clase que describe a la orden de carga")
 public class OrdenCarga implements Serializable {
 

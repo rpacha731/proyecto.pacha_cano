@@ -1,5 +1,7 @@
 package com.iua.iw3.proyecto.pacha_cano.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.iua.iw3.proyecto.pacha_cano.model.serializers.ConciliacionJsonSerializer;
 import lombok.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -10,6 +12,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@JsonSerialize(using = ConciliacionJsonSerializer.class)
 @ApiModel(value = "Conciliación", description = "Clase que describe a la conciliación")
 public class Conciliacion implements Serializable {
 
