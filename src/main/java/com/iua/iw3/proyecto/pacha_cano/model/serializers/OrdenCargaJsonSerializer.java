@@ -12,6 +12,8 @@ import java.io.IOException;
 @Slf4j
 public class OrdenCargaJsonSerializer extends StdSerializer<OrdenCarga> {
 
+    public OrdenCargaJsonSerializer() {this(null);}
+
     public OrdenCargaJsonSerializer(Class<OrdenCarga> t) { super(t); }
 
     @Override
@@ -20,37 +22,11 @@ public class OrdenCargaJsonSerializer extends StdSerializer<OrdenCarga> {
         {
             gen.writeNumberField("id", value.getId());
             gen.writeNumberField("numeroOrden", value.getNumeroOrden());
-
+            gen.writeStringField("codigoExterno", value.getCodigoExterno());
             gen.writeObjectField("camion", value.getCamion());
-
-//            { //Camion
-//                String camionStr = JsonUtils.getObjectMapper(Camion.class, new CamionJsonSerializer(Camion.class), null)
-//                        .writeValueAsString(value.getCamion());
-//                gen.writeFieldName("camion");
-//                gen.writeRawValue(camionStr);
-//            }
-
-            { //Cliente
-                String clienteStr = JsonUtils.getObjectMapper(Cliente.class, new ClienteJsonSerializer(Cliente.class), null)
-                        .writeValueAsString(value.getCliente());
-                gen.writeFieldName("cliente");
-                gen.writeRawValue(clienteStr);
-            }
-
-            { //Chofer
-                String choferStr = JsonUtils.getObjectMapper(Chofer.class, new ChoferJsonSerializer(Chofer.class), null)
-                        .writeValueAsString(value.getChofer());
-                gen.writeFieldName("chofer");
-                gen.writeRawValue(choferStr);
-            }
-
-            { //Producto
-                String productoStr = JsonUtils.getObjectMapper(Producto.class, new ProductoJsonSerializer(Producto.class), null)
-                        .writeValueAsString(value.getProducto());
-                gen.writeFieldName("producto");
-                gen.writeRawValue(productoStr);
-            }
-
+            gen.writeObjectField("cliente", value.getCliente());
+            gen.writeObjectField("chofer", value.getChofer());
+            gen.writeObjectField("producto", value.getProducto());
             gen.writeNumberField("pesoInicial", value.getPesoInicial() == null ? -1 : value.getPesoInicial());
             gen.writeNumberField("pesoFinal", value.getPesoFinal() == null ? -1 : value.getPesoFinal());
             gen.writeNumberField("frecuencia", value.getFrecuencia());
@@ -63,20 +39,11 @@ public class OrdenCargaJsonSerializer extends StdSerializer<OrdenCarga> {
             gen.writeStringField("fechaHoraInicioCarga", value.getFechaHoraInicioCarga() == null ? "null" : value.getFechaHoraInicioCarga().toString());
             gen.writeStringField("fechaHoraFinCarga", value.getFechaHoraFinCarga() == null ? "null" : value.getFechaHoraFinCarga().toString());
             gen.writeStringField("fechaHoraPesoFinal", value.getFechaHoraPesoFinal() == null ? "null" : value.getFechaHoraPesoFinal().toString());
-
-            { // Datos Carga Registro
-                String datosCargaHistoStr = JsonUtils.getObjectMapper(DatosCarga.class, new DatosCargaJsonSerializer(DatosCarga.class), null)
-                        .writeValueAsString(value.getRegistroDatosCarga());
-                gen.writeFieldName("registroDatosCarga");
-                gen.writeRawValue(datosCargaHistoStr);
-            }
-
-            // Promedios y masa acumulada final
+            gen.writeObjectField("registroDatosCarga", value.getRegistroDatosCarga());
             gen.writeStringField("masaAcumuladaTotal", value.getMasaAcumuladaTotal() == null ? "null" : value.getMasaAcumuladaTotal().toString());
             gen.writeStringField("temperaturaPromedio", value.getTemperaturaPromedio() == null ? "null" : value.getTemperaturaPromedio().toString());
             gen.writeStringField("densidadPromedio", value.getDensidadPromedio() == null ? "null" : value.getDensidadPromedio().toString());
             gen.writeStringField("caudalPromedio", value.getCaudalPromedio() == null ? "null" : value.getCaudalPromedio().toString());
-
         }
         gen.writeEndObject();
     }

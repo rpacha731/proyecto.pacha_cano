@@ -101,9 +101,9 @@ public class AuthToken implements Serializable {
     private static final String DELIMITER = ":";
 
     public static String[] decode(String token) throws InvalidCookieException {
-        for (int j = 0; j < token.length() % 4; j++) {
-            token = token + "=";
-        }
+        StringBuilder tokenBuilder = new StringBuilder(token);
+        tokenBuilder.append("=".repeat(Math.max(0, tokenBuilder.length() % 4)));
+        token = tokenBuilder.toString();
         try {
             String cookieAsPlainText = new String(Base64.getDecoder().decode(token.getBytes()));
 

@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class ConciliacionJsonSerializer extends StdSerializer<Conciliacion> {
 
+    public ConciliacionJsonSerializer() { this(null);}
+
     public ConciliacionJsonSerializer(Class<Conciliacion> t) { super(t); }
 
     @Override

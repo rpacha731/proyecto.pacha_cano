@@ -1,0 +1,29 @@
+<mjml>
+    <mj-head>
+        <mj-font name="Cantarell" href="https://fonts.googleapis.com/css2?family=Cantarell:wght@400;700&display=swap"/>
+    </mj-head>
+    <mj-body>
+        <mj-section>
+            <mj-column background-color="black" padding-bottom="20px" padding-top="20px">
+
+                <mj-text font-size="20px" color="white" font-family="Cantarell" align="center">
+                    {{title}}
+                </mj-text>
+
+                <mj-divider border-width="2px" border-color="#C9FC6E"/>
+
+                <mj-text font-size="15px" color="white" font-family="Cantarell" align="center">
+                    {{body}}
+                </mj-text>
+
+                <mj-divider border-width="2px" border-color="#C9FC6E"/>
+
+                <mj-text font-size="10px" padding-top="0px" color="white" font-family="Cantarell" align="center">
+                    <p style="margin-bottom: 4px"> Ingeniería Web 3 - 2022 </p>
+                    Powered By: <span style="color: #C9FC6E;"> PC - Pacha Cano</span>
+                </mj-text>
+
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>

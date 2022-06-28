@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Data
 @Table(name="camiones")
 @JsonSerialize(using = CamionJsonSerializer.class)
-@ApiModel(value = "Camión", description = "Clase que describe al camión")
+@ApiModel(value = "Camion", description = "Clase que describe al camión")
 public class Camion implements Serializable {
 
     private static final long serialVersionUID = -4871142170558316526L;

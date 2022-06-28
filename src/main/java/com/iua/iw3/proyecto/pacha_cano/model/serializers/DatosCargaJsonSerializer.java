@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class DatosCargaJsonSerializer extends StdSerializer<DatosCarga> {
 
+    public DatosCargaJsonSerializer() { this(null); }
+
     public DatosCargaJsonSerializer(Class<DatosCarga> t) { super(t); }
 
     @Override
@@ -20,7 +22,7 @@ public class DatosCargaJsonSerializer extends StdSerializer<DatosCarga> {
             gen.writeNumberField("temperatura", value.getTemperatura());
             gen.writeNumberField("densidad", value.getDensidad());
             gen.writeNumberField("caudal", value.getCaudal());
-            gen.writeStringField("estampaTiempo", value.getEstampaTiempo().toString());
+            gen.writeStringField("estampaTiempo", value.getEstampaTiempo() != null ? value.getEstampaTiempo().toString() : "");
         }
         gen.writeEndObject();
     }

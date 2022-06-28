@@ -1,5 +1,7 @@
 package com.iua.iw3.proyecto.pacha_cano.model.accounts;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.iua.iw3.proyecto.pacha_cano.model.serializers.RolJsonSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonSerialize(using = RolJsonSerializer.class)
 @ApiModel(value = "Rol", description = "Clase que describe al rol")
 public class Rol implements Serializable {
 

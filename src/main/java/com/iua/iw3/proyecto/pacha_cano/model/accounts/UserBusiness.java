@@ -70,6 +70,7 @@ public class UserBusiness implements IUserBusiness {
     public User loadByEmail(String email) throws BusinessException, NotFoundException {
         Optional<User> o;
         try {
+            log.warn("Cargando usuario por email: " + email);
             o = userRepository.findFirstByEmail(email);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

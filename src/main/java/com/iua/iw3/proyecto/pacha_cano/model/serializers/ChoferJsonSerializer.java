@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class ChoferJsonSerializer extends StdSerializer<Chofer> {
 
+    public ChoferJsonSerializer() { this(null); }
+
     public ChoferJsonSerializer(Class<Chofer> t) { super(t); }
 
     @Override
@@ -19,6 +21,7 @@ public class ChoferJsonSerializer extends StdSerializer<Chofer> {
             gen.writeStringField("nombre", value.getNombre());
             gen.writeStringField("apellido", value.getApellido());
             gen.writeNumberField("dni", value.getDni());
+            gen.writeStringField("codigoExterno", value.getCodigoExterno());
         }
         gen.writeEndObject();
     }

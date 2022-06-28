@@ -24,20 +24,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private IAuthTokenBusiness authTokenBusiness;
     private IUserBusiness userBusiness;
 
-    public AuthTokenFilter (IAuthTokenBusiness authTokenBusiness, IUserBusiness userBusiness) {
+    public AuthTokenFilter(IAuthTokenBusiness authTokenBusiness, IUserBusiness userBusiness) {
         super();
         this.authTokenBusiness = authTokenBusiness;
         this.userBusiness = userBusiness;
     }
 
-    public static String ORIGIN_TOKEN_TOKEN = "token";
-    public static String ORIGIN_TOKEN_HEADER = "header";
-
-    public static String AUTH_HEADER = "X-AUTH-TOKEN";
-    public static String AUTH_HEADER1 = "XAUTHTOKEN";
     public static String AUTH_PARAMETER = "xauthtoken";
     public static String AUTH_PARAMETER1 = "token";
-
     public static String AUTH_PARAMETER_AUTHORIZATION = "Authorization";
 
     private boolean esValido(String valor) {
@@ -47,30 +41,25 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String parameter = request.getParameter(AUTH_PARAMETER);
-        if (!esValido(parameter)) {
+        if (!esValido(parameter))
             parameter = request.getParameter(AUTH_PARAMETER1);
-        }
-        String header = request.getHeader(AUTH_HEADER);
-        if (!esValido(header)) {
-            header = request.getHeader(AUTH_PARAMETER_AUTHORIZATION);
-            if(header != null && header.toLowerCase().startsWith("bearer ")) {
-                header=header.substring("Bearer ".length());
-            }
-        }
+
+        String header = request.getHeader(AUTH_PARAMETER_AUTHORIZATION);
+        if (esValido(header) && header.toLowerCase().startsWith("bearer "))
+            header = header.substring("Bearer ".length());
+
         if (!esValido(parameter) && !esValido(header)) {
             filterChain.doFilter(request, response);
             return;
         }
-        String token = "";
-        if (esValido(parameter)) {
+        String token;
+        if (esValido(parameter))
             token = parameter;
-            log.trace("Token recibido por query param=" + token);
-        } else {
+        else
             token = header;
-            log.trace("Token recibido por header=" + token);
-        }
-        String[] tokens = null;
-        AuthToken authToken = null;
+
+        String[] tokens;
+        AuthToken authToken;
 
         try {
             tokens = AuthToken.decode(token);
@@ -108,10 +97,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             authToken.addRequest();
             authTokenBusiness.saveToken(authToken);
             String username = authToken.getUsername();
-            User u ;
+            User u;
             try {
                 u = userBusiness.loadByEmail(username);
-                log.info("Token para usuario {} ({}) [{}] {}", u.getUsername(), token, request.getRequestURI(), request.getMethod());
+//                log.info("Token para usuario {} ({}) [{}] {}", u.getUsername(), token, request.getRequestURI(), request.getMethod());
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(u, null,
                         u.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);

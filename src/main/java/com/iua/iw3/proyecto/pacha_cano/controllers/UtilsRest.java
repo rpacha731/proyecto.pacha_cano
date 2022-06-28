@@ -1,4 +1,4 @@
-package com.iua.iw3.proyecto.pacha_cano.web;
+package com.iua.iw3.proyecto.pacha_cano.controllers;
 
 import com.iua.iw3.proyecto.pacha_cano.model.accounts.User;
 import com.iua.iw3.proyecto.pacha_cano.security.authtoken.AuthToken;

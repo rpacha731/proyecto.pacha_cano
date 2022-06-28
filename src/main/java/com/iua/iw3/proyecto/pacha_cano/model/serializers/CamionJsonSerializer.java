@@ -7,8 +7,7 @@ import com.iua.iw3.proyecto.pacha_cano.model.Camion;
 
 import java.io.IOException;
 
-public class
-CamionJsonSerializer extends StdSerializer<Camion> {
+public class CamionJsonSerializer extends StdSerializer<Camion> {
 
     public CamionJsonSerializer () { this(null); }
 
@@ -22,6 +21,7 @@ CamionJsonSerializer extends StdSerializer<Camion> {
             gen.writeStringField("patente", value.getPatente());
             gen.writeStringField("descripcion", value.getDescripcion());
             gen.writeNumberField("cisternado", value.getCisternado());
+            gen.writeStringField("codigoExterno", value.getCodigoExterno());
         }
         gen.writeEndObject();
     }

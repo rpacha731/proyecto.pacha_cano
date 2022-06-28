@@ -1,4 +1,4 @@
-package com.iua.iw3.proyecto.pacha_cano.web;
+package com.iua.iw3.proyecto.pacha_cano.controllers;
 
 import com.iua.iw3.proyecto.pacha_cano.exceptions.BusinessException;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.NotFoundException;
@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @AllArgsConstructor
 @Api(description = "REST Controller para el inicio de sesión y autenticación")
-public class AuthRestController extends UtilsRest {
+public class AuthController extends UtilsRest {
 
     private IUserBusiness userBusiness;
     private PasswordEncoder passwordEncoder;
@@ -41,6 +42,7 @@ public class AuthRestController extends UtilsRest {
     public ResponseEntity<String> registro(@RequestBody LoginRequest loginRequest) {
         try {
             User user = userBusiness.loadByEmail(loginRequest.getUserEmail());
+            log.warn(user.toString());
             String msj = user.checkAccount(passwordEncoder, loginRequest.getPassword());
             if (msj != null) {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -53,7 +55,7 @@ public class AuthRestController extends UtilsRest {
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
+        } catch (NotFoundException e) { // No se encontró el usuario, se procede a registrarlo
             return new ResponseEntity<>("BAD_LOGIN_REQUEST", HttpStatus.BAD_REQUEST);
         }
     }

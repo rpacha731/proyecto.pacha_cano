@@ -1,6 +1,7 @@
 package com.iua.iw3.proyecto.pacha_cano.model.accounts;
 
-import com.iua.iw3.proyecto.pacha_cano.model.accounts.Rol;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.iua.iw3.proyecto.pacha_cano.model.serializers.UserJsonSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonSerialize(using = UserJsonSerializer.class)
 @ApiModel(value = "Usuario", description = "Clase que describe al usuario")
 public class User implements UserDetails, Serializable {
 

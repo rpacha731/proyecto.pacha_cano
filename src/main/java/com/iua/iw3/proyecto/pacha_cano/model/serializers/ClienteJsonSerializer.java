@@ -9,6 +9,8 @@ import java.io.IOException;
 
 public class ClienteJsonSerializer extends StdSerializer<Cliente> {
 
+    public ClienteJsonSerializer() { this(null); }
+
     public ClienteJsonSerializer(Class<Cliente> t) { super(t); }
 
     @Override
@@ -18,6 +20,7 @@ public class ClienteJsonSerializer extends StdSerializer<Cliente> {
             gen.writeNumberField("id", value.getId());
             gen.writeStringField("razonSocial", value.getRazonSocial());
             gen.writeStringField("contacto", value.getContacto());
+            gen.writeStringField("codigoExterno", value.getCodigoExterno());
         }
         gen.writeEndObject();
     }
