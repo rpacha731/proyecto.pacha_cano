@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/proyecto_pacha_cano_iw3?createDatabaseIfNotExist=true&verifyServerCertificate=false&useSSL=true&serverTimezone=America/Argentina/Cordoba
+    url: jdbc:mysql://db-iw3.cs9qzgc6jxbe.us-east-1.rds.amazonaws.com:3305/proyecto_pacha_cano_iw3?createDatabaseIfNotExist=true&verifyServerCertificate=false&useSSL=true&serverTimezone=America/Argentina/Cordoba
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: root
+    username: admin
+    password: IceCream2020
 
   jpa:
     show-sql: true

@@ -1,6 +1,8 @@
 package com.iua.iw3.proyecto.pacha_cano.bussiness;
 
 import com.iua.iw3.proyecto.pacha_cano.exceptions.*;
+import com.iua.iw3.proyecto.pacha_cano.mailing.dtos.SimpleNotificacionEmail;
+import com.iua.iw3.proyecto.pacha_cano.mailing.services.MailService;
 import com.iua.iw3.proyecto.pacha_cano.model.*;
 import com.iua.iw3.proyecto.pacha_cano.persistence.*;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.DatosCargaRequest;
@@ -8,6 +10,7 @@ import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoFinalRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoInicialRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -23,6 +26,7 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
     private final ClienteRepository clienteRepository;
     private final ChoferRepository choferRepository;
     private final ProductoRepository productoRepository;
+    private final MailService mailService;
 //    private final SimpMessagingTemplate messagingTemplate;
 
     @Override
@@ -425,6 +429,21 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
                 .temperaturaPromedio(ordenCarga.getTemperaturaPromedio())
                 .densidadPromedio(ordenCarga.getDensidadPromedio())
                 .caudalPromedio(ordenCarga.getCaudalPromedio()).build();
+    }
+
+    @Async
+    public void enviarMail() throws BusinessException {
+        try {
+            this.mailService.sendEmail(SimpleNotificacionEmail.builder()
+                            .asunto("Prueba de envio de correo")
+                            .body("Prueba de envio de correo body")
+                            .destinatario("leonelpacha14@gmail.com")
+                            .title("Prueba de envio de correo title")
+                            .redirectUrl("http://localhost:4200/").build());
+        } catch (MailSenderException e) {
+            throw new BusinessException(e.getMessage());
+        }
+
     }
 
 }

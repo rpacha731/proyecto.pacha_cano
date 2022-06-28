@@ -30,9 +30,9 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        if (rolRepository.findByNombre("ROLE_ADMIM").isEmpty()) {
+        if (rolRepository.findByNombre("ROLE_ADMIN").isEmpty()) {
             Rol admin = Rol.builder()
-                    .nombre("ROLE_ADMIM")
+                    .nombre("ROLE_ADMIN")
                     .descripcion("Rol de administrador")
                     .build();
             try {

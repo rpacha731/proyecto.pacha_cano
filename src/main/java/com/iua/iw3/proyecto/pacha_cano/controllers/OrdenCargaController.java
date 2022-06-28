@@ -306,4 +306,21 @@ public class OrdenCargaController {
             return new ResponseEntity<>(new MsgResponse(409, e.getMessage()), HttpStatus.CONFLICT);
         }
     }
+
+    // Get de prueba para enviar mail de prueba
+    @ApiOperation(value = "Enviar mail de prueba", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Mail enviado"),
+            @ApiResponse(code = 409, message = "Error al enviar el mail | Error del servidor")
+    })
+    @ApiIgnore
+    @GetMapping(value = "test/enviar-mail", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> enviarMail() {
+        try {
+            this.ordenCargaBusiness.enviarMail();
+            return ResponseEntity.ok(new MsgResponse(200, "Mail enviado"));
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(new MsgResponse(409, e.getMessage()), HttpStatus.CONFLICT);
+        }
+    }
 }
