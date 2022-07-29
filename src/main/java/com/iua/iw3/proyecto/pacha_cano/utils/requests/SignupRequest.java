@@ -21,14 +21,6 @@ public class SignupRequest {
     @NotNull(message = "El email del usuario es obligatorio.")
     private String email;
 
-    @NotNull(message = "El dni del usuario es obligatorio.")
-    private Long dni;
-
-    @NotNull(message = "La fecha de nacimiento del usuario es obligatoria.")
-    private Date fechaNacimiento;
-
-    private String telefono;
-
     @NotNull(message = "La contraseña es obligatoria.")
     private String password;
 }

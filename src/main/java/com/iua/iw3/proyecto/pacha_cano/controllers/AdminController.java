@@ -25,7 +25,7 @@ import javax.validation.constraints.NotEmpty;
 @Slf4j
 @AllArgsConstructor
 @Api(description = "REST Controller para el inicio de sesión y autenticación")
-public class AdminController extends UtilsRest {
+public class AdminController {
 
     private final UserBusiness userBusiness;
     private final AdminUsersImpl adminUsers;
