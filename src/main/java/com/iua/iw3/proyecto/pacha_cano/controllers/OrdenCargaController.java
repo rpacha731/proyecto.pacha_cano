@@ -1,6 +1,7 @@
 package com.iua.iw3.proyecto.pacha_cano.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.iua.iw3.proyecto.pacha_cano.bussiness.NotificacionService;
 import com.iua.iw3.proyecto.pacha_cano.bussiness.OrdenCargaBusinessImpl;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.*;
 import com.iua.iw3.proyecto.pacha_cano.model.*;
@@ -34,6 +35,7 @@ import java.util.List;
 public class OrdenCargaController {
 
     private final OrdenCargaBusinessImpl ordenCargaBusiness;
+    private final NotificacionService notificacionService;
 
     @ApiOperation(value = "Listado completo de las ordenes de carga en todos sus estados", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
@@ -322,5 +324,20 @@ public class OrdenCargaController {
         } catch (BusinessException e) {
             return new ResponseEntity<>(new MsgResponse(409, e.getMessage()), HttpStatus.CONFLICT);
         }
+    }
+
+    // Get de prueba para enviar una notificación de prueba
+    @ApiOperation(value = "Enviar notificación de prueba", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Notificación enviada"),
+            @ApiResponse(code = 409, message = "Error al enviar la notificación | Error del servidor")
+    })
+    @ApiIgnore
+    @GetMapping(value = "test/notificacion", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> enviarNotificacion() {
+
+            this.notificacionService.nuevaNotificacionUsuario("evento", 1L);
+            return ResponseEntity.ok(new MsgResponse(200, "Notificación enviada"));
+
     }
 }

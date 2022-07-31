@@ -20,7 +20,7 @@ public class ConciliacionJsonSerializer extends StdSerializer<Conciliacion> {
             gen.writeNumberField("numeroOrden", value.getNumeroOrden());
             gen.writeNumberField("pesoInicial", value.getPesoInicial());
             gen.writeNumberField("pesoFinal", value.getPesoFinal());
-            gen.writeNumberField("CantProductoCargado", value.getMasaAcumuladaTotal());
+            gen.writeNumberField("masaAcumuladaTotal", value.getMasaAcumuladaTotal());
             gen.writeNumberField("netoBalanza", value.getNetoBalanza());
             gen.writeNumberField("diferenciaBalanzaYCaudal", value.getDifBalanzaYCaudal());
             gen.writeNumberField("temperaturaPromedio", value.getTemperaturaPromedio());

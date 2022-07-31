@@ -293,6 +293,7 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
     @Override
     public Conciliacion adjuntarPesoFinal(PesoFinalRequest pesoFinalRequest) throws BusinessException, NotFoundException {
         OrdenCarga aux = this.getByNumeroOrden(pesoFinalRequest.getNumeroOrden());
+        log.warn(aux.getRegistroDatosCarga().toString());
         if (!aux.getEstado().equals(Estados.E3))
             throw new BusinessException("No se puede adjuntar el peso final, la orden no está cerrada");
 
