@@ -90,8 +90,8 @@ public class AuthToken implements Serializable {
     @Override
     public String toString() {
         return String.format(
-                "Token: serie=%s, user=%s, tokenValue=%s, lastUsed=%s, requestCount=%s, valid=%s",
-                getSeries(), getUsername(), encodeTokenValue(), getLastUsed(), getRequestCount(), valid());
+                "Token: serie=%s, token=%s, user=%s, tokenValue=%s, lastUsed=%s, requestCount=%s, valid=%s",
+                getSeries(), getToken(), getUsername(), encodeTokenValue(), getLastUsed(), getRequestCount(), valid());
     }
 
     public boolean valid() {
