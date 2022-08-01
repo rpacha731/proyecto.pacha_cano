@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/proyecto_pacha_cano_iw3?createDatabaseIfNotExist=true&verifyServerCertificate=false&useSSL=true&serverTimezone=America/Argentina/Cordoba
+    url: jdbc:mysql://cpsoa.mooo.com:13306/proyecto_pacha_cano_iw3?createDatabaseIfNotExist=true&verifyServerCertificate=false&useSSL=true&serverTimezone=America/Argentina/Cordoba
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: root
@@ -12,7 +12,13 @@ spring:
       ddl-auto: update
 
 server:
-  port: 8080
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:certSOA.p12
+    key-store-password: pc2022
+    key-alias: pcSOA
+  port: 8443
 
 mail:
   MAIL_FROM: graylogpc2020@gmail.com

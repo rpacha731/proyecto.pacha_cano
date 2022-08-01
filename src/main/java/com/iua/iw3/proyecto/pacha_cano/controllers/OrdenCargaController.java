@@ -1,14 +1,10 @@
 package com.iua.iw3.proyecto.pacha_cano.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.iua.iw3.proyecto.pacha_cano.bussiness.NotificacionService;
 import com.iua.iw3.proyecto.pacha_cano.bussiness.OrdenCargaBusinessImpl;
 import com.iua.iw3.proyecto.pacha_cano.exceptions.*;
 import com.iua.iw3.proyecto.pacha_cano.model.*;
-import com.iua.iw3.proyecto.pacha_cano.model.serializers.ConciliacionJsonSerializer;
-import com.iua.iw3.proyecto.pacha_cano.model.serializers.OrdenCargaJsonSerializer;
 import com.iua.iw3.proyecto.pacha_cano.utils.Constant;
-import com.iua.iw3.proyecto.pacha_cano.utils.JsonUtils;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.DatosCargaRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.MsgResponse;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoFinalRequest;
@@ -17,7 +13,6 @@ import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +20,9 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping(Constant.URL_BASE)
@@ -37,12 +34,14 @@ public class OrdenCargaController {
     private final OrdenCargaBusinessImpl ordenCargaBusiness;
     private final NotificacionService notificacionService;
 
-    @ApiOperation(value = "Listado completo de las ordenes de carga en todos sus estados", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Listado completo de las ordenes de carga en todos sus estados",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Listado completo de las ordenes"),
             @ApiResponse(code = 409, message = "Error al obtener el listado de las ordenes | Error del servidor")
     })
     @GetMapping(value = "ordenes-carga", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> listado() {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.listAll());
@@ -51,13 +50,14 @@ public class OrdenCargaController {
         }
     }
 
-
-    @ApiOperation(value = "Listado completo de los productos", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Listado completo de los productos",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Listado completo de los productos"),
             @ApiResponse(code = 409, message = "Error al obtener el listado de los productos | Error del servidor")
     })
     @GetMapping(value = "productos", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> listadoProductos() {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.listAllProductos());
@@ -66,12 +66,14 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Listado completo de los camiones", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Listado completo de los camiones",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Listado completo de los camiones"),
             @ApiResponse(code = 409, message = "Error al obtener el listado de los camiones | Error del servidor")
     })
     @GetMapping(value = "camiones", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> listadoCamiones() {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.listAllCamiones());
@@ -80,12 +82,14 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Listado completo de los clientes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Listado completo de los clientes",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Listado completo de los clientes"),
             @ApiResponse(code = 409, message = "Error al obtener el listado de los clientes | Error del servidor")
     })
     @GetMapping(value = "clientes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> listadoClientes() {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.listAllClientes());
@@ -94,12 +98,14 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Listado completo de los choferes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Listado completo de los choferes",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Listado completo de los choferes"),
             @ApiResponse(code = 409, message = "Error al obtener el listado de los choferes | Error del servidor")
     })
     @GetMapping(value = "choferes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> listadoChoferes() {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.listAllChoferes());
@@ -108,13 +114,15 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Buscar orden de carga por id", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Buscar orden de carga por id",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Orden de carga encontrada"),
             @ApiResponse(code = 404, message = "Orden de carga no encontrada"),
             @ApiResponse(code = 409, message = "Error al obtener la orden de carga | Error del servidor")
     })
     @GetMapping(value = "ordenes-carga/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<?> loadById(@PathVariable("id") Long id) {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.load(id));
@@ -125,13 +133,15 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Buscar orden de carga por número de orden", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Buscar orden de carga por número de orden",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Orden de carga encontrada"),
             @ApiResponse(code = 404, message = "Orden de carga no encontrada"),
             @ApiResponse(code = 409, message = "Error al obtener la orden de carga | Error del servidor")
     })
     @GetMapping(value = "ordenes-carga/numero-orden/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<?> loadByNumOrden(@PathVariable("numOrden") Long numOrden) {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.getByNumeroOrden(numOrden));
@@ -142,13 +152,15 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Listar ordenes de carga según el estado", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Listar ordenes de carga según el estado",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Listado de ordenes de carga"),
             @ApiResponse(code = 404, message = "No se encontraron órdenes de carga con estado Ei"),
             @ApiResponse(code = 409, message = "Error al obtener el listado de las ordenes de carga según estado | Error del servidor")
     })
     @GetMapping(value = "ordenes-carga/E{i}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> listadoPorEstado(@PathVariable("i") Integer i) {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.listAllByEstado(i));
@@ -159,12 +171,14 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Crear orden de carga", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Crear orden de carga",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "Orden de carga creada"),
             @ApiResponse(code = 409, message = "Ya existe una orden de carga con el mismo número de orden | Error del servidor")
     })
     @PostMapping(value = "ordenes-carga", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> crearOrdenCarga(@RequestBody OrdenCarga ordenCarga) {
         try {
             return new ResponseEntity<>(this.ordenCargaBusiness.create(ordenCarga), HttpStatus.CREATED);
@@ -173,13 +187,15 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Adjuntar tara a una orden de carga", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Adjuntar tara a una orden de carga",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Tara adjuntada a la orden de carga"),
             @ApiResponse(code = 404, message = "Orden de carga no encontrada"),
             @ApiResponse(code = 409, message = "Error al adjuntar la tara a la orden de carga (fecha) | Error del servidor")
     })
     @PutMapping(value = "ordenes-carga/tara", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> adjuntarTara(@RequestBody PesoInicialRequest pesoInicialRequest) {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.adjuntarTara(pesoInicialRequest));
@@ -190,19 +206,22 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Adjuntar dato a una orden de carga", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Adjuntar dato a una orden de carga",
+            authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Dato adjuntado a la orden de carga"),
             @ApiResponse(code = 404, message = "Orden de carga no encontrada"),
             @ApiResponse(code = 409, message = "Orden cerrada, no se pueden adjuntar más datos | Error del servidor")
     })
-    @PutMapping(value = "ordenes-carga/carga", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "ordenes-carga/carga")
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<?> adjuntarDatoCarga(@RequestParam("numeroOrden") Long numeroOrden,
                                                @RequestParam("password") Integer password,
                                                @RequestParam("masaAcumulada") Double masaAcumulada,
                                                @RequestParam("densidad") Double densidad,
                                                @RequestParam("temperatura") Double temperatura,
                                                @RequestParam("caudal") Double caudal) {
+        Map<String, Object> map = new HashMap<>();
         try {
             String estado = this.ordenCargaBusiness.adjuntarDatoCarga(DatosCargaRequest.builder()
                     .numeroOrden(numeroOrden)
@@ -212,10 +231,9 @@ public class OrdenCargaController {
                     .temperatura(temperatura)
                     .caudal(caudal)
                     .build());
-            // TODO revisar estado de la orden de carga
-            if (estado.equals("OK")) return ResponseEntity.ok(estado);
-            if (estado.equals("ORDEN_CERRADA")) return new ResponseEntity<>(estado, HttpStatus.CONFLICT);
-            return new ResponseEntity<>(estado, HttpStatus.CONFLICT);
+            map.put("estado", estado);
+            if (estado.equals("ORDEN_CERRADA")) return new ResponseEntity<>(map, HttpStatus.CONFLICT);
+            return new ResponseEntity<>(map, HttpStatus.OK);
 
         } catch (NotFoundException e) {
             return new ResponseEntity<>(new MsgResponse(404, e.getMessage()), HttpStatus.NOT_FOUND);
@@ -224,13 +242,15 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Cerrar una orden de carga", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Cerrar una orden de carga",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Orden de carga cerrada"),
             @ApiResponse(code = 404, message = "Orden de carga no encontrada"),
             @ApiResponse(code = 409, message = "Orden de carga cerrada, no se pueden adjuntar más datos | Error del servidor")
     })
     @PostMapping(value = "ordenes-carga/cerrar/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<?> cerrarOrden(@PathVariable("numOrden") Long numeroOrden) {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.cerrarOrden(numeroOrden));
@@ -241,12 +261,14 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Adjuntar peso final a la orden de carga", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Adjuntar peso final a la orden de carga",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Peso final adjuntado a la orden de carga"),
             @ApiResponse(code = 409, message = "Error al adjuntar el peso final a la orden de carga | Error del servidor")
     })
     @PutMapping(value = "ordenes-carga/peso-final", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<?> adjuntarPesoFinal(@RequestBody PesoFinalRequest pesoFinalRequest) {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.adjuntarPesoFinal(pesoFinalRequest));
@@ -257,12 +279,14 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Buscar conciliación de orden de carga por número de orden", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Buscar conciliación de orden de carga por número de orden",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Conciliación de orden de carga encontrada"),
             @ApiResponse(code = 409, message = "Conciliación de orden de carga no encontrada | Error del servidor")
     })
     @GetMapping(value = "ordenes-carga/conciliacion/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<?> loadConciliacion(@PathVariable("numOrden") Long numOrden) {
         try {
             return ResponseEntity.ok(this.ordenCargaBusiness.getConciliacion(numOrden));
@@ -273,13 +297,15 @@ public class OrdenCargaController {
         }
     }
 
-    @ApiOperation(value = "Cambiar frecuencia de carga de una orden de carga", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Cambiar frecuencia de carga de una orden de carga",
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Frecuencia de carga cambiada"),
             @ApiResponse(code = 404, message = "Orden de carga no encontrada"),
             @ApiResponse(code = 409, message = "Error al cambiar la frecuencia de carga | Error del servidor")
     })
     @PutMapping(value = "ordenes-carga/cambiar-frecuencia/{numOrden}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<?> cambiarFrecuencia(@PathVariable("numOrden") Long numeroOrden,
                                                @RequestParam("frecuencia") Integer frecuencia) {
         try {
@@ -309,23 +335,6 @@ public class OrdenCargaController {
         }
     }
 
-    // Get de prueba para enviar mail de prueba
-    @ApiOperation(value = "Enviar mail de prueba", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Mail enviado"),
-            @ApiResponse(code = 409, message = "Error al enviar el mail | Error del servidor")
-    })
-    @ApiIgnore
-    @GetMapping(value = "test/enviar-mail", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> enviarMail() {
-        try {
-            this.ordenCargaBusiness.enviarMail();
-            return ResponseEntity.ok(new MsgResponse(200, "Mail enviado"));
-        } catch (BusinessException e) {
-            return new ResponseEntity<>(new MsgResponse(409, e.getMessage()), HttpStatus.CONFLICT);
-        }
-    }
-
     // Get de prueba para enviar una notificación de prueba
     @ApiOperation(value = "Enviar notificación de prueba", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses(value = {
@@ -335,8 +344,7 @@ public class OrdenCargaController {
     @ApiIgnore
     @GetMapping(value = "test/notificacion", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> enviarNotificacion() {
-
-            this.notificacionService.nuevaNotificacionUsuario("evento", 1L);
+            this.notificacionService.nuevaNotificacionUsuario(1L, 100F, 1L);
             return ResponseEntity.ok(new MsgResponse(200, "Notificación enviada"));
 
     }

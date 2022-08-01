@@ -24,9 +24,7 @@ public class Notificacion {
 
     private String contenido;
 
-    private String actionUrl;
-
-    private String evento;
+    private Long numeroOrden;
 
     private boolean leida = false;
 

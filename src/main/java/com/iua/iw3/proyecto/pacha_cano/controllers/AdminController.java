@@ -7,15 +7,13 @@ import com.iua.iw3.proyecto.pacha_cano.model.accounts.UserBusiness;
 import com.iua.iw3.proyecto.pacha_cano.utils.Constant;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.ChangeRolesRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.MsgResponse;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotEmpty;
@@ -31,12 +29,13 @@ public class AdminController {
     private final AdminUsersImpl adminUsers;
 
     @ApiOperation(value = "Lista de usuarios",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Lista de usuarios"),
             @ApiResponse(code = 409, message = "Error del servidor | Error al obtener la lista de usuarios"),
     })
     @GetMapping(value = "admin/users", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> listarUsuarios() {
         try {
             return ResponseEntity.ok(userBusiness.listado());
@@ -46,13 +45,14 @@ public class AdminController {
     }
 
     @ApiOperation(value = "Cambiar roles de un usuario",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Usuario con roles cambiados"),
             @ApiResponse(code = 404, message = "Usuario no encontrado"),
             @ApiResponse(code = 409, message = "Error del servidor | Error al cambiar los roles del usuario")
     })
     @PutMapping(value = "admin/users/changeRoles", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> changeRole(@RequestBody @NotEmpty ChangeRolesRequest changeRolesRequest) {
         try {
             return ResponseEntity.ok(adminUsers.changeRole(changeRolesRequest));
@@ -64,12 +64,13 @@ public class AdminController {
     }
 
     @ApiOperation(value = "Lista de roles",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Lista de roles"),
             @ApiResponse(code = 409, message = "Error del servidor | Error al obtener la lista de roles"),
     })
     @GetMapping(value = "admin/roles", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> listarRoles() {
         try {
             return ResponseEntity.ok(adminUsers.listAllRoles());
@@ -79,13 +80,14 @@ public class AdminController {
     }
 
     @ApiOperation(value = "Habilita/Deshabilita un usuario",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Usuario habilitado/deshabilitado"),
             @ApiResponse(code = 404, message = "Usuario no encontrado"),
             @ApiResponse(code = 409, message = "Error del servidor | Error al habilitar/deshabilitar el usuario")
     })
     @PutMapping(value = "admin/users/enable/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> enableUser(@PathVariable("id") Long id) {
         try {
             return ResponseEntity.ok(adminUsers.enableDisableUser(id));
@@ -95,6 +97,5 @@ public class AdminController {
             return new ResponseEntity<>(new MsgResponse(404, e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
-
 
 }

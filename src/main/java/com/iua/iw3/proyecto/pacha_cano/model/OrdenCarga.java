@@ -64,9 +64,8 @@ public class OrdenCarga implements Serializable {
     @Enumerated(EnumType.STRING)
     private Estados estado;
 
-
-    @ApiModelProperty(notes = "Precio del producto", example = "20.65", required = true, allowableValues = "1, 2, 5, 10, 15")
-    private Integer frecuencia; // hacemos una lista estatica
+    @ApiModelProperty(notes = "Frecuencia de guardado de datos de carga", example = "5", required = true, allowableValues = "1, 2, 5, 10, 15")
+    private Integer frecuencia;
 
     @ApiModelProperty(notes = "Fecha y hora en la que se crea la orden", example = "2021-11-19 23:48:08", required = true)
     @Column(nullable = false, columnDefinition = "DATETIME")
@@ -126,6 +125,9 @@ public class OrdenCarga implements Serializable {
     @Column(unique = true)
     @ApiModelProperty(notes = "Código externo de la orden de carga", example = "ORD_001_2021", required = true)
     private String codigoExterno;
+
+    @ApiModelProperty(notes = "Temperatura de umbral para enviar notificación", example = "45", required = true, allowableValues = "40, 45, 50")
+    private Float temperaturaUmbral = 40F;
 
     public static Integer generateRandomPassword () {
         double aux = 10000 + Math.random() * 90000;

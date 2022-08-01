@@ -4,6 +4,7 @@ import com.iua.iw3.proyecto.pacha_cano.exceptions.*;
 import com.iua.iw3.proyecto.pacha_cano.mailing.dtos.SimpleNotificacionEmail;
 import com.iua.iw3.proyecto.pacha_cano.mailing.services.MailService;
 import com.iua.iw3.proyecto.pacha_cano.model.*;
+import com.iua.iw3.proyecto.pacha_cano.model.accounts.User;
 import com.iua.iw3.proyecto.pacha_cano.persistence.*;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.DatosCargaRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoFinalRequest;
@@ -11,9 +12,11 @@ import com.iua.iw3.proyecto.pacha_cano.utils.requests.PesoInicialRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.util.*;
 
 @Service
@@ -26,8 +29,7 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
     private final ClienteRepository clienteRepository;
     private final ChoferRepository choferRepository;
     private final ProductoRepository productoRepository;
-    private final MailService mailService;
-//    private final SimpMessagingTemplate messagingTemplate;
+    private final NotificacionService notificacionService;
 
     @Override
     public List<OrdenCarga> listAll() throws BusinessException {
@@ -190,6 +192,7 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
         aux.setPesoInicial(pesoInicialRequest.getPesoInicial());
         aux.setFechaHoraPesoInicial(new Date());
         aux.setEstado(Estados.E2);
+        aux.setTemperaturaUmbral(pesoInicialRequest.getTemperaturaUmbral());
 
         Integer passwd;
         do {
@@ -203,11 +206,18 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
     @Override
     public String adjuntarDatoCarga(DatosCargaRequest datosCargaRequest) throws BusinessException, NotFoundException {
         OrdenCarga aux = this.getByNumeroOrden(datosCargaRequest.getNumeroOrden());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         // Guardará los datos si está en estado E2,
         // el password es correcto y
         // pasó el periodo de tiempo de guardado (frecuencia de guardado)
         if (aux.getEstado().equals(Estados.E2) && aux.getPassword().equals(datosCargaRequest.getPassword())) {
+
+            String tiempo = "Sin datos";
+            if (!aux.getRegistroDatosCarga().isEmpty())
+                tiempo = BigDecimal.valueOf((aux.getPreset() -
+                        aux.getRegistroDatosCarga().get(aux.getRegistroDatosCarga().size() - 1).getMasaAcumulada())
+                        / (datosCargaRequest.getCaudal() * 60)).intValue() + " minutos";
 
             // Asigno la fecha / hora de inicio de carga (cuando llega el primer dato)
             if (aux.getFechaHoraInicioCarga() == null) aux.setFechaHoraInicioCarga(new Date());
@@ -226,7 +236,7 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
 
                 if (new Date().before(time.getTime()) && aux.getRegistroDatosCarga().size() != 0) {
                     log.info("NO GUARDÉ " + datosCargaRequest.getMasaAcumulada());
-                    return "OK"; // TODO devolver tiempo restante de llenado
+                    return tiempo; // TODO devolver tiempo restante de llenado
                 } // No se guarda el registro del dato si todavía no llegué a la frecuencia
 
                 // A partir de aquí, si se guardaría el dato, pero primero verifico la masa sea mayor al anterior y
@@ -239,7 +249,7 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
                             || datosCargaRequest.getDensidad() < 0
                             || datosCargaRequest.getDensidad() > 1) {
                         log.info("No if");
-                        return "OK"; // TODO devolver tiempo restante de llenado
+                        return tiempo; // TODO devolver tiempo restante de llenado
                     }
                 }
                 // No guardo el dato si se cumple el anterior if.
@@ -254,12 +264,14 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
                         .densidad(datosCargaRequest.getDensidad())
                         .temperatura(datosCargaRequest.getTemperatura())
                         .caudal(datosCargaRequest.getCaudal()).build());
-//                aux.setRegistroDatosCarga(aux.getRegistroDatosCarga());
 
                 // Guardo la orden en la base de datos
                 ordenCargaRepository.save(aux);
+                if (datosCargaRequest.getTemperatura() > aux.getTemperaturaUmbral())
+                    this.notificacionService.nuevaNotificacionUsuario(user.getId(), datosCargaRequest.getTemperatura().floatValue(), aux.getNumeroOrden());
+
                 log.info("Guardé " + datosCargaRequest.getMasaAcumulada());
-                return "OK"; // TODO devolver tiempo restante de llenado
+                return tiempo; // TODO devolver tiempo restante de llenado
 
             } else {
 
@@ -383,6 +395,12 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
 
     private FileInputStream generateCSV(Long numOrden) throws IOException {
         File file = new File("datosCarga-" + numOrden.intValue() + ".csv");
+        OrdenCarga orden;
+        try {
+            orden = this.getByNumeroOrden(numOrden);
+        } catch (BusinessException | NotFoundException e) {
+            throw new RuntimeException(e);
+        }
         if (!file.exists()) {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
             bufferedWriter.write("masaAcumulada,densidad,temperatura,caudal");
@@ -392,23 +410,34 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
 
             Random ran = new Random();
 
-            double masaAcum = 0.0, aux, minTemp = 15.0;
+            double masaAcum = 0.0, aux, minTemp = 25.0; //Min 25 y Max 50.9
 
-            for (int i = 1; i < 1000; i++) {
-                aux = ran.nextInt(5); // el aux es el caudal en cierta forma,
-                // es lo que pasa por el caudalímetro y es la masa que se acumuló
-                masaAcum = masaAcum + aux;
+            while (masaAcum < orden.getPreset()) {
+                aux = ran.nextInt(5) + 1;
+                masaAcum += aux;
                 datos[0] = String.valueOf(masaAcum);
-
                 datos[1] = String.valueOf((ran.nextInt(10) / 10.0));
-
-                datos[2] = String.valueOf(minTemp + (double) ran.nextInt(35) + (ran.nextInt(10) / 10.0));
-
+                datos[2] = String.valueOf(minTemp + (double) ran.nextInt(25) + (ran.nextInt(10) / 10.0));
                 datos[3] = String.valueOf(aux);
-
                 bufferedWriter.write(String.join(",", datos));
                 bufferedWriter.newLine();
+
             }
+//            for (int i = 1; i < 1000; i++) {
+//                aux = ran.nextInt(5); // el aux es el caudal en cierta forma,
+//                // es lo que pasa por el caudalímetro y es la masa que se acumuló
+//                masaAcum = masaAcum + aux;
+//                datos[0] = String.valueOf(masaAcum);
+//
+//                datos[1] = String.valueOf((ran.nextInt(10) / 10.0));
+//
+//                datos[2] = String.valueOf(minTemp + (double) ran.nextInt(25) + (ran.nextInt(10) / 10.0));
+//
+//                datos[3] = String.valueOf(aux);
+//
+//                bufferedWriter.write(String.join(",", datos));
+//                bufferedWriter.newLine();
+//            }
 
             bufferedWriter.close();
 
@@ -432,19 +461,6 @@ public class OrdenCargaBusinessImpl implements OrdenCargaBusiness {
                 .caudalPromedio(ordenCarga.getCaudalPromedio()).build();
     }
 
-    @Async
-    public void enviarMail() throws BusinessException {
-        try {
-            this.mailService.sendEmail(SimpleNotificacionEmail.builder()
-                            .asunto("Prueba de envio de correo")
-                            .body("Prueba de envio de correo body")
-                            .destinatario("leonelpacha14@gmail.com")
-                            .title("Prueba de envio de correo title")
-                            .redirectUrl("http://localhost:4200/").build());
-        } catch (MailSenderException e) {
-            throw new BusinessException(e.getMessage());
-        }
 
-    }
 
 }

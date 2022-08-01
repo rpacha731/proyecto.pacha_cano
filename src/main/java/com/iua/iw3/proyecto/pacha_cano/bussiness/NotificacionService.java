@@ -6,13 +6,10 @@ import java.util.List;
 
 public interface NotificacionService {
 
-    void nuevaNotificacionUsuario(String nombreEvento, Long userId);
-
+    void nuevaNotificacionUsuario(Long userId, Float temperatura, Long numeroOrden);
     List<Notificacion> notificacionesPorUsuario();
 
     Notificacion leerNotificacion(Long idNotificacion);
-
-    void borrarNotificacion(Long idNotificacion);
 
     Notificacion saveNotificacion(Notificacion notificacion);
 

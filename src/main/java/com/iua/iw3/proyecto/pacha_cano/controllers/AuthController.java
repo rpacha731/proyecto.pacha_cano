@@ -7,15 +7,13 @@ import com.iua.iw3.proyecto.pacha_cano.utils.Constant;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.AuthResponse;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.LoginRequest;
 import com.iua.iw3.proyecto.pacha_cano.utils.requests.SignupRequest;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -73,7 +71,7 @@ public class AuthController{
     }
 
     @ApiOperation(value = "Devuelve el usuario actualmente logueado",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            produces = MediaType.APPLICATION_JSON_VALUE, authorizations = {@Authorization(value = "Bearer")})
     @ApiResponse(code = 200, message = "Descripción del usuario correcta")
     @GetMapping(value = "/auth-info", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> authInfo(@RequestParam String tokenEncript) {

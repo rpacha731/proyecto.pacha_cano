@@ -45,11 +45,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable();
-        http.formLogin().disable();
-        http.httpBasic().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+        http.cors().and().csrf().disable()
+                .formLogin().disable()
+                .httpBasic().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authorizeRequests().antMatchers(HttpMethod.POST,
+                        "/api/v1/login", "/api/v1/sign-up", "/api/v1/logout").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/auth-info").permitAll()
+                .antMatchers(HttpMethod.GET, "/*", "/assets/*").permitAll()
+                .antMatchers("/v2/api-docs",
+                        "/configuration/ui",
+                        "/swagger-resources/**",
+                        "/configuration-security",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/webjars/**").permitAll()
+                .anyRequest().authenticated();
+//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga/conciliacion*").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+//                .antMatchers(Constant.URL_BASE + "/ordenes-carga/carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+//                .antMatchers(Constant.URL_BASE + "/**").hasAnyRole("ROLE_ADMIN")
+//                .anyRequest().permitAll();
 //        http.authorizeRequests().antMatchers(Constant.URL_BASE + "/login").permitAll()
 //                .antMatchers(Constant.URL_BASE + "/auth-info").permitAll()
 //                .antMatchers("/v2/api-docs",
@@ -64,21 +80,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga/conciliacion*").hasAnyRole("USER", "ADMIN")
 //                .antMatchers(Constant.URL_BASE + "/ordenes-carga/carga").hasAnyRole("USER", "ADMIN")
 //                .anyRequest().authenticated();
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "**/ordenes-carga").hasAnyRole("ADMIN");
-        http.authorizeRequests().antMatchers(Constant.URL_BASE + "/login").permitAll()
-                .antMatchers(Constant.URL_BASE + "/auth-info").permitAll()
-                .antMatchers("/v2/api-docs",
-                        "/configuration/ui",
-                        "/swagger-resources/**",
-                        "/configuration-security",
-                        "/swagger-ui.html",
-                        "/swagger-ui/**",
-                        "/webjars/**").permitAll()
-//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga/conciliacion*").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-//                .antMatchers(Constant.URL_BASE + "/ordenes-carga/carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-//                .antMatchers(Constant.URL_BASE + "/**").hasAnyRole("ROLE_ADMIN")
-                .anyRequest().permitAll();
+
 
         http.addFilterAfter(new AuthTokenFilter(authTokenBusiness, userBusiness), UsernamePasswordAuthenticationFilter.class);
 

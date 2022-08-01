@@ -7,7 +7,6 @@ import dev.ditsche.mailo.MailAddress;
 import dev.ditsche.mailo.factory.MailBuilder;
 import dev.ditsche.mailo.provider.MailProvider;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 public class MailServiceImpl implements MailService {
 
     private final MailProvider mailProvider;
-    private String urlBase;
     private String mailFrom;
 
 
@@ -32,8 +30,6 @@ public class MailServiceImpl implements MailService {
                 .to(new MailAddress(notificacionEmail.getDestinatario()))
                 .from(new MailAddress(mailFrom))
                 .param("title", notificacionEmail.getTitle())
-                .param("urlBase", urlBase)
-                .param("redirectUrl", notificacionEmail.getRedirectUrl())
                 .param("body", notificacionEmail.getBody())
                 .loadTemplate("mailTemplate");
 

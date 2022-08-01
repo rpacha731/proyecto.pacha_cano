@@ -32,4 +32,5 @@ public class DatosCargaRequest {
 
     @ApiModelProperty(notes = "Caudal del gas liquido", required = true)
     private Double caudal;
+
 }

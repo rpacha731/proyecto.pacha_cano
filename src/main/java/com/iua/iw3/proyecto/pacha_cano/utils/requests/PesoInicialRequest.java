@@ -17,4 +17,7 @@ public class PesoInicialRequest {
 
     @ApiModelProperty(notes = "Peso inicial o tara", required = true)
     private Double pesoInicial;
+
+    @ApiModelProperty(notes = "Temperatura umbral de carga", required = true)
+    private Float temperaturaUmbral;
 }
