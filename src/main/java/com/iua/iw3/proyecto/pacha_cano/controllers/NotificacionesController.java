@@ -1,6 +1,8 @@
 package com.iua.iw3.proyecto.pacha_cano.controllers;
 
 import com.iua.iw3.proyecto.pacha_cano.bussiness.NotificacionService;
+import com.iua.iw3.proyecto.pacha_cano.exceptions.BusinessException;
+import com.iua.iw3.proyecto.pacha_cano.utils.requests.MsgResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -35,7 +37,12 @@ public class NotificacionesController {
     @PostMapping("/notificaciones-user/leer")
     @Secured({"ROLE_ADMIN", "ROLE_USER"})
     public ResponseEntity<?> leerNotificacionUsuario(@RequestParam("idNotif") Long idNotificacion) {
-        return new ResponseEntity<>(this.notificacionService.leerNotificacion(idNotificacion), HttpStatus.OK);
+        try {
+            this.notificacionService.leerNotificacion(idNotificacion);
+            return new ResponseEntity<>(new MsgResponse(200, "Noitificación leída"), HttpStatus.OK);
+        } catch (BusinessException e) {
+            return new ResponseEntity<>(new MsgResponse(409, e.getMessage()), HttpStatus.CONFLICT);
+        }
     }
 
 }

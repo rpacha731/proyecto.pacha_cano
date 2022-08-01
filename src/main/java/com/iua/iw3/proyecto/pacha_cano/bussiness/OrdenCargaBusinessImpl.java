@@ -1,8 +1,6 @@
 package com.iua.iw3.proyecto.pacha_cano.bussiness;
 
 import com.iua.iw3.proyecto.pacha_cano.exceptions.*;
-import com.iua.iw3.proyecto.pacha_cano.mailing.dtos.SimpleNotificacionEmail;
-import com.iua.iw3.proyecto.pacha_cano.mailing.services.MailService;
 import com.iua.iw3.proyecto.pacha_cano.model.*;
 import com.iua.iw3.proyecto.pacha_cano.model.accounts.User;
 import com.iua.iw3.proyecto.pacha_cano.persistence.*;

@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -27,7 +26,6 @@ public class NotificacionServiceImpl implements NotificacionService {
     private final UserRepository userRepository;
     private final AuthService authService;
     private final SimpMessagingTemplate messagingTemplate;
-
     private final MailService mailService;
 
 
@@ -73,25 +71,24 @@ public class NotificacionServiceImpl implements NotificacionService {
 
     }
 
-
     @Override
     public List<Notificacion> notificacionesPorUsuario() {
         User userActual = this.authService.getUserActual();
-        return this.notificacionRepository.findAllByUserId(userActual.getId());
+        return this.notificacionRepository.findAllByUserIdAndLeidaIsFalse(userActual.getId());
     }
 
-
     @Override
-    public Notificacion leerNotificacion(Long idNotificacion) {
+    public void leerNotificacion(Long idNotificacion) throws BusinessException {
         Notificacion aux = this.notificacionRepository.findById(idNotificacion)
                 .orElseThrow();
         aux.setLeida(true);
-        return this.saveNotificacion(aux);
+        aux.setFechaNotificacionAceptada(new Date());
+        aux.setObservacion("La temperatura de carga, en la orden de carga n° " + aux.getNumeroOrden() +
+                " superó el umbral, para más detalle ver el campo \"Contenido\"");
+        try {
+            this.notificacionRepository.save(aux);
+        } catch (Exception e) {
+            throw new BusinessException("Error al guardar la notificación leída");
+        }
     }
-
-    @Override
-    public Notificacion saveNotificacion(Notificacion notificacion) {
-        return this.notificacionRepository.save(notificacion);
-    }
-
 }

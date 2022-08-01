@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -24,8 +23,10 @@ public class DataLoader implements CommandLineRunner {
     private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
     private RolRepository rolRepository;
-
-    private OrdenCargaRepository ordenCargaRepository;
+    private CamionRepository camionRepository;
+    private ChoferRepository choferRepository;
+    private ClienteRepository clienteRepository;
+    private ProductoRepository productoRepository;
 
     @Override
     public void run(String... args) {
@@ -54,14 +55,14 @@ public class DataLoader implements CommandLineRunner {
             }
         }
 
-        if (userRepository.findFirstByEmail("pc@pc.com").isEmpty()) {
-            Set<Rol> roles = rolRepository.findAll().stream().collect(Collectors.toSet());
+        if (userRepository.findFirstByEmail("graylogpc2020@gmail.com").isEmpty()) {
+            Set<Rol> roles = new HashSet<>(rolRepository.findAll());
             User admin = User.builder()
                     .nombre("Pacha-Cano")
                     .apellido("IW3")
                     .enabled(true)
-                    .email("pc@pc.com")
-                    .password(passwordEncoder.encode("olis12345"))
+                    .email("graylogpc2020@gmail.com")
+                    .password(passwordEncoder.encode("pc-2022"))
                     .roles(roles)
                     .build();
             try {
@@ -71,15 +72,15 @@ public class DataLoader implements CommandLineRunner {
             }
         }
 
-        if (userRepository.findFirstByEmail("user@pc.com").isEmpty()) {
+        if (userRepository.findFirstByEmail("lpacha1603@gmail.com").isEmpty()) {
             Set<Rol> rol = new HashSet<>();
             rol.add(rolRepository.findByNombre("ROLE_USER").get());
             User user = User.builder()
-                    .nombre("User 1")
-                    .apellido("super")
+                    .nombre("Leonel ")
+                    .apellido("User")
                     .enabled(true)
-                    .email("user@pc.com")
-                    .password(passwordEncoder.encode("12345"))
+                    .email("lpacha1603@gmail.com")
+                    .password(passwordEncoder.encode("pc-2022"))
                     .roles(rol).build();
             try {
                 userRepository.save(user);
@@ -88,73 +89,55 @@ public class DataLoader implements CommandLineRunner {
             }
         }
 
-        if (ordenCargaRepository.findAll().isEmpty()) {
+        if (this.camionRepository.findAll().isEmpty()) {
             Camion camion = Camion.builder()
-                    .patente("ABC1234")
-                    .descripcion("Alto camion papaaaaa")
-                    .cisternado(250000L)
+                    .patente("AB123CD")
+                    .descripcion("Camión de carga")
+                    .cisternado(25000L)
                     .codigoExterno("CAM_1234")
                     .build();
+            try {
+                this.camionRepository.save(camion);
+            } catch (DataIntegrityViolationException e) {
+                log.error(e.getMessage());
+            }
+        }
 
+        if (this.choferRepository.findAll().isEmpty()) {
+            Chofer chofer = Chofer.builder()
+                    .nombre("Nicolas ")
+                    .apellido("Gómez")
+                    .dni(48948915L)
+                    .codigoExterno("NIC_GOM_915")
+                    .build();
+            try {
+                this.choferRepository.save(chofer);
+            } catch (DataIntegrityViolationException e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        if (this.clienteRepository.findAll().isEmpty()) {
             Cliente cliente = Cliente.builder()
                     .razonSocial("Arcor")
-                    .contacto("arc@gmail.com")
+                    .contacto("arcor@gmail.com")
                     .codigoExterno("CLN123")
                     .build();
+            try {
+                this.clienteRepository.save(cliente);
+            } catch (DataIntegrityViolationException e) {
+                log.error(e.getMessage());
+            }
+        }
 
-            Chofer chofer = Chofer.builder()
-                    .nombre("Nicolas")
-                    .apellido("Gómez")
-                    .dni(4894891531L)
-                    .codigoExterno("NIC_GOM_531")
-                    .build();
-
+        if (this.productoRepository.findAll().isEmpty()) {
             Producto producto = Producto.builder()
                     .nombre("Gas Liquido")
                     .descripcion("Gas GNC Liquido Volátil")
                     .codigoExterno("GNC_LV")
                     .build();
-
-            DatosCarga datosCarga = DatosCarga.builder()
-                    .masaAcumulada(25000.65)
-                    .temperatura(32.21)
-                    .densidad(0.98)
-                    .caudal(1.256)
-                    .build();
-
-
-            List<DatosCarga> listAux = new ArrayList<>();
-            listAux.add(datosCarga);
-            listAux.add(datosCarga);
-
-            OrdenCarga ordenCarga = OrdenCarga.builder()
-                    .numeroOrden(1L)
-                    .camion(camion)
-                    .cliente(cliente)
-                    .chofer(chofer)
-                    .producto(producto)
-                    .codigoExterno("ORD_001_2021")
-                    .pesoInicial(0.235)
-                    .pesoFinal(255000.254)
-                    .frecuencia(10)
-                    .password(OrdenCarga.generateRandomPassword())
-                    .estado(Estados.E1)
-                    .fechaHoraRecepcion(new Date())
-                    .fechaHoraPesoInicial(new Date())
-                    .fechaHoraTurno(new Date())
-                    .preset(2550L)
-                    .fechaHoraInicioCarga(new Date())
-                    .fechaHoraFinCarga(new Date())
-                    .fechaHoraPesoFinal(new Date())
-                    .registroDatosCarga(listAux)
-                    .masaAcumuladaTotal(250154.05)
-                    .temperaturaPromedio(15.5)
-                    .densidadPromedio(0.5)
-                    .caudalPromedio(2.5)
-                    .build();
-
             try {
-                this.ordenCargaRepository.save(ordenCarga);
+                this.productoRepository.save(producto);
             } catch (DataIntegrityViolationException e) {
                 log.error(e.getMessage());
             }

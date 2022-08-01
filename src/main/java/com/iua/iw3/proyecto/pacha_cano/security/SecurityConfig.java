@@ -29,7 +29,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-        //securedEnabled = true,
+        securedEnabled = true,
         prePostEnabled = true)
 @AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -37,11 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private IAuthTokenBusiness authTokenBusiness;
     private IUserBusiness userBusiness;
     private UserDetailsService userDetailsService;
-
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-//    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -61,29 +56,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui/**",
                         "/webjars/**").permitAll()
                 .anyRequest().authenticated();
-//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga/conciliacion*").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-//                .antMatchers(Constant.URL_BASE + "/ordenes-carga/carga").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
-//                .antMatchers(Constant.URL_BASE + "/**").hasAnyRole("ROLE_ADMIN")
-//                .anyRequest().permitAll();
-//        http.authorizeRequests().antMatchers(Constant.URL_BASE + "/login").permitAll()
-//                .antMatchers(Constant.URL_BASE + "/auth-info").permitAll()
-//                .antMatchers("/v2/api-docs",
-//                        "/configuration/ui",
-//                        "/swagger-resources/**",
-//                        "/configuration-security",
-//                        "/swagger-ui.html",
-//                        "/swagger-ui/**",
-//                        "/webjars/**").permitAll();
-//        http.authorizeRequests().antMatchers(HttpMethod.POST, "**/ordenes-carga").hasAnyRole("ADMIN");
-//        http.authorizeRequests().antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga").hasAnyRole("USER", "ADMIN")
-//                .antMatchers(HttpMethod.GET, Constant.URL_BASE + "/ordenes-carga/conciliacion*").hasAnyRole("USER", "ADMIN")
-//                .antMatchers(Constant.URL_BASE + "/ordenes-carga/carga").hasAnyRole("USER", "ADMIN")
-//                .anyRequest().authenticated();
-
 
         http.addFilterAfter(new AuthTokenFilter(authTokenBusiness, userBusiness), UsernamePasswordAuthenticationFilter.class);
-
     }
 
     @Bean
@@ -101,21 +75,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-//    @Bean
-//    CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(List.of("*"));
-////        configuration.setAllowCredentials(true);
-////        configuration.addAllowedOriginPattern("*");
-//        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Headers", "Access-Control-Allow-Origin",
-//                "Access-Control-Request-Method", "Access-Control-Request-Headers", "Origin", "Cache-Control",
-//                "Content-Type", "Authorization", "XAUTHTOKEN", "X-Requested-With", "X-AUTH-TOKEN"));
-//
-//        configuration.setAllowedMethods(Arrays.asList("DELETE", "GET", "POST", "PATCH", "PUT", "OPTIONS"));
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 }

@@ -31,6 +31,13 @@ public class Notificacion {
     @Column(columnDefinition = "DATETIME DEFAULT NULL")
     private Date fechaNotificacion;
 
+    @Column(columnDefinition = "DATETIME DEFAULT NULL")
+    private Date fechaNotificacionAceptada;
+
+    private String observacion;
+
     private Long userId;
+
+
 
 }
