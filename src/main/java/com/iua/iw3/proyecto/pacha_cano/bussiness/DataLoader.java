@@ -62,7 +62,7 @@ public class DataLoader implements CommandLineRunner {
                     .apellido("IW3")
                     .enabled(true)
                     .email("graylogpc2020@gmail.com")
-                    .password(passwordEncoder.encode("pc-2022"))
+                    .password(passwordEncoder.encode("pc3-2022"))
                     .roles(roles)
                     .build();
             try {
@@ -80,7 +80,7 @@ public class DataLoader implements CommandLineRunner {
                     .apellido("User")
                     .enabled(true)
                     .email("lpacha1603@gmail.com")
-                    .password(passwordEncoder.encode("pc-2022"))
+                    .password(passwordEncoder.encode("pc3-2022"))
                     .roles(rol).build();
             try {
                 userRepository.save(user);
